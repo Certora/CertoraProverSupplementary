@@ -1,0 +1,27 @@
+// recommend running via:
+//     ./check.sh --settings -b=10
+
+rule linearSearch_found(uint256 key) {
+	env e;
+	uint256 len = sinvoke getNumEntries(e);
+	require len <= 10;
+
+	bool b;
+	uint256 i;
+	b, i = sinvoke indexOf(e, key);
+
+	assert b => sinvoke entries(e, i) == key;
+}
+
+rule linearSearch_not_found(uint256 key, uint256 any_index) {
+	env e;
+	uint256 len = sinvoke getNumEntries(e);
+	require len <= 10;
+	require any_index < len;
+
+	bool b;
+	uint256 i;
+	b, i = sinvoke indexOf(e, key);
+
+	assert !b => sinvoke entries(e, any_index) != key;
+}
