@@ -40,3 +40,33 @@ rule others_can_only_increase() {
    //can increase due to a transfer to msg.sender
    assert _balance <= balance_ ,"withdraw from others balance";
 }
+
+rule can_withdraw_after_any_time_and_any_other_transaction() {	
+	address account;
+	uint256 amount;
+	method f;
+	uint256 time;
+	
+	// account deposits amount 
+	env _e;
+	require _e.msg.sender == account;
+	require amount > 0;
+	sinvoke deposit(_e,amount);
+	
+	//any other trasaction beside withdraw by account
+	env eF;
+	require (f != withdraw && f!=transfer) || eF.msg.sender!=account;
+	calldataarg arg; // any argument
+	sinvoke f(eF,arg); // successful (potentially state-changing!)
+   
+	//account withdraws
+	env e_;
+	require e_.block.timestamp > _e.block.timestamp + time;
+	require e_.msg.sender == account;
+	sinvoke withdraw(e_);
+	// check the erc balnce 
+	uint256 ercBalance = sinvoke _ercBalance(e_);
+	assert ercBalance >= amount, "should have at least what have been deposisted";
+	
+
+}
