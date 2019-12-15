@@ -45,7 +45,6 @@ rule can_withdraw_after_any_time_and_any_other_transaction() {
 	address account;
 	uint256 amount;
 	method f;
-	uint256 time;
 	
 	// account deposits amount 
 	env _e;
@@ -61,7 +60,7 @@ rule can_withdraw_after_any_time_and_any_other_transaction() {
    
 	//account withdraws
 	env e_;
-	require e_.block.timestamp > _e.block.timestamp + time;
+	require e_.block.timestamp > _e.block.timestamp // The operation occured after the initial operation
 	require e_.msg.sender == account;
 	sinvoke withdraw(e_);
 	// check the erc balnce 
