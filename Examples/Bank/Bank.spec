@@ -60,12 +60,10 @@ rule can_withdraw_after_any_time_and_any_other_transaction() {
    
 	//account withdraws
 	env e_;
-	require e_.block.timestamp > _e.block.timestamp // The operation occured after the initial operation
+	require e_.block.timestamp > _e.block.timestamp ; // The operation occured after the initial operation
 	require e_.msg.sender == account;
 	sinvoke withdraw(e_);
 	// check the erc balnce 
 	uint256 ercBalance = sinvoke _ercBalance(e_);
 	assert ercBalance >= amount, "should have at least what have been deposisted";
-	
-
 }
