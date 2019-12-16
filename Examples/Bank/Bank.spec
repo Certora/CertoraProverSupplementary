@@ -66,4 +66,32 @@ rule can_withdraw_after_any_time_and_any_other_transaction() {
 	// check the erc balnce 
 	uint256 ercBalance = sinvoke _ercBalance(e_);
 	assert ercBalance >= amount, "should have at least what have been deposisted";
+	
+
 }
+
+
+/*
+rule inverseTransfer(address account1, address account2,uint amount) {
+
+	storage init = lastStorage;
+	
+	env e_a1; 
+	env e_a2;
+	require amount > 0;
+	require(e_a1.msg.sender == account1);
+	require(e_a2.msg.sender == account2);
+	
+	//transfer form account1 to account2 and back
+	sinvoke transfer(e_a1,account2,amount);
+	sinvoke transfer(e_a2,account1,amount);
+	balanceAccount1Case1 = sinvoke getfunds(account1);
+	balanceAccount2Case1 = sinvoke getfunds(account2);
+	
+	
+	
+	sinvoke transfer(e_a1,account1,amount) at init;
+	sinvoke transfer(e_a2,account1,amount);
+
+}
+*/
