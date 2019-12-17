@@ -71,27 +71,31 @@ rule can_withdraw_after_any_time_and_any_other_transaction() {
 }
 
 
-/*
-rule inverseTransfer(address account1, address account2,uint amount) {
 
-	storage init = lastStorage;
-	
-	env e_a1; 
-	env e_a2;
-	require amount > 0;
-	require(e_a1.msg.sender == account1);
-	require(e_a2.msg.sender == account2);
-	
-	//transfer form account1 to account2 and back
-	sinvoke transfer(e_a1,account2,amount);
-	sinvoke transfer(e_a2,account1,amount);
-	balanceAccount1Case1 = sinvoke getfunds(account1);
-	balanceAccount2Case1 = sinvoke getfunds(account2);
-	
-	
-	
-	sinvoke transfer(e_a1,account1,amount) at init;
-	sinvoke transfer(e_a2,account1,amount);
+rule additiveTransfer {
+	env e1; 
+	env e2;
+	uint256 a;
+	uint256 b;
+	address to;
+	address from;
+	uint256 balanceToCase1;
+	uint256 balanceToCase2;
+	uint256 balanceFromCase1;
+	uint256 balanceFromCase2;
+	  
+	storage init = lastStorage; // record state before the transaction
 
+	require(e1.msg.sender == from) && (e2.msg.sender==from); // e1 and e2 transfer from the same address from
+		
+	//transfer a and then b from form 'from' to 'to'
+	sinvoke transfer(e1,to,a);
+	sinvoke transfer(e2,to,b);
+	balanceToCase1 = sinvoke getfunds(to);
+	balanceFromCase1 = sinvoke getfunds(from);
+    // start a new transaction
+	sinvoke transfer(e1, to, a+b) at init ;
+	balanceToCase2 = sinvoke getfunds(to);
+	balanceFromCase1 = sinvoke getfunds(from);
+	assert balanceToCase1 == balanceToCase2 && balanceFromCase1==balanceFromCase2, "Expected Transfer to be Additive" ;
 }
-*/
