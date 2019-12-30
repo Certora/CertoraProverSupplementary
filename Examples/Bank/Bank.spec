@@ -41,10 +41,9 @@ rule others_can_only_increase() {
    assert _balance <= balance_ ,"withdraw from others balance";
 }
 
-rule can_withdraw_after_any_time_and_any_other_transaction() {	
+rule can_withdraw_after_any_time_and_any_other_transaction(method f) {	
 	address account;
 	uint256 amount;
-	method f;
 	
 	// account deposits amount 
 	env _e;
@@ -54,7 +53,7 @@ rule can_withdraw_after_any_time_and_any_other_transaction() {
 	
 	//any other trasaction beside withdraw by account
 	env eF;
-	require (f != withdraw && f!=transfer) || eF.msg.sender!=account;
+	require (f.selector != withdraw().selector && f.selector!=transfer(address, uint256).selector) || eF.msg.sender!=account;
 	calldataarg arg; // any argument
 	sinvoke f(eF,arg); // successful (potentially state-changing!)
    
