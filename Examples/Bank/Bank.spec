@@ -3,9 +3,14 @@ pragma specify 0.1
 methods {
     init_state()
     getfunds(address) returns uint256 envfree
+	getTotalFunds()  returns uint256 envfree
 }
 
 invariant address_zero_cannot_become_an_account(env e,address z) z==0 => sinvoke getfunds(z)==0
+
+//An invariant rule for verifing that the total funds is at least as the funds of a single user 
+invariant totalFundsMoreThanUserFunds(env e) forall address a. sinvoke getfunds(a) <= sinvoke getTotalFunds()
+
 
 rule withdraw_succeeds {
    env e; // env represents the bytecode environment passed one every call
@@ -23,10 +28,9 @@ rule transfer_reverts(address to, uint256 amount) {
    assert balance < amount => lastReverted , "not enough funds";
 }
 
-rule others_can_only_increase() {
+rule others_can_only_increase(address other, method f) {
    env e;
-   address other;
-   method f;
+   
    //assume msg.sender is a different addres
    require e.msg.sender != other;
    //get balance before
