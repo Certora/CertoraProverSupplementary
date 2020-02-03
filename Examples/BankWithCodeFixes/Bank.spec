@@ -8,6 +8,9 @@ methods {
 
 invariant address_zero_cannot_become_an_account(env e,address z) z==0 => sinvoke getfunds(z)==0
 
+//An invariant rule for verifing that the total funds is at least as the funds of a single user 
+/*invariant totalFundsMoreThanUserFunds(env e) forall address a. sinvoke getfunds(a) <= sinvoke getTotalFunds()
+*/
 
 rule withdraw_succeeds {
    env e; // env represents the bytecode environment passed one every call
@@ -65,7 +68,7 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
 	sinvoke withdraw(e_);
 	// check the erc balnce 
 	uint256 ercBalance = sinvoke _ercBalance(e_);
-	assert ercBalance >= amount, "should have at least what have been deposisted";
+	assert ercBalance >= amount-1, "should have at least what have been deposisted";
 	
 
 }
@@ -97,5 +100,6 @@ rule additiveTransfer {
 	sinvoke transfer(e1, to, a+b) at init ;
 	balanceToCase2 = sinvoke getfunds(to);
 	balanceFromCase2 = sinvoke getfunds(from);
-	assert balanceToCase1 == balanceToCase2 && balanceFromCase1==balanceFromCase2, "Expected Transfer to be Additive" ;
+	assert balanceToCase1 == balanceToCase2 && balanceFromCase1==balanceFromCase2, "Expected Transfer to be additive" ;
+	
 }
