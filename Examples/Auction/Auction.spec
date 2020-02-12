@@ -1,44 +1,88 @@
-methods {
-	// define methods of the contract that are independent of the environmnet 
-	totalSupply() returns uint envfree
-	owner() returns address envfree
-	getAuction(uint)  returns uint,uint,address,uint,uint envfree
+/* Certora prover verifies calls for all environments. The environment is passed an additional parameter to functions.
+It can be seen as the following:
+struct env {
+	address msg.address // address of the contract begin verified
+	address msg.sender //  sender of the message 
+	uint msg.value  // number of wei sent with the message
+	uint block.number // current block number
+	uint block.timestamp // current time stamp
+	address tx.origin // original message sender
 }
+
+*/
+
+/**************** Generic rules ***********************/
+//A rule for verifying that any scenario proferemed by some sender does not decrease the balance of any other account.
+rule senderCanOnlyIncreaseOthersBalance( method f, address sender, address other)
+{
+    env e; // for every possible environment 
+    require other != sender; //assume we have two different accounts.
+	uint256 origBalanceOfOther = sinvoke balanceOf(e, other); //get the current balance of the other account
+
+	//invoke any function with msg.sender the sender account
+    calldataarg arg;
+	env ef;
+	require ef.msg.sender == sender;
+	invoke f(ef, arg);
+
+	env e2;
+	uint256 newBalanceOfOther = sinvoke balanceOf(e2, other);
+
+    assert newBalanceOfOther >= origBalanceOfOther, "The balance of other account decreased"; 
+}
+
+//A rule for verifying a correct behavior on sending zero tokens - return false or revert 
+transferWithIllegalValue(address to)
+{
+	env e; // for every possible environment
+	require to != 0; //assume the case that address to in not zero
+
+	require e.msg.value == 0; //assume no msg.value since this is not a payable function
+	bool res = invoke transferTo(e, to, 0);
+
+	assert lastReverted || !res, "permits a transfer of zero tokens";
+}
+
+
+
+// A rule for verifying  that the total supply is always less than  max_int
 rule bounded_supply(method f) {
-    env e;
-	uint256 _supply = sinvoke totalSupply(); // total supply before
+    env e; //for every possible environment 
+	uint256 _supply = sinvoke totalSupply(e); // total supply before
 	require (_supply < 100000); //start with a reasonable amount
 
-    // the next 3 lines invoke an arbitrary public function on an arbitrary input
-    calldataarg arg;
-    sinvoke f(e,arg);
+    // invoke an arbitrary public function on an arbitrary input and take into account only cases that do not revert
+    calldataarg arg;
+    sinvoke f(e,arg);
 
-    uint256 supply_ = sinvoke totalSupply(); // total supply after
+    uint256 supply_ = sinvoke totalSupply(e); // total supply after
 
-    assert  supply_ < 115792089237316195423570985008687907853269984665640564039457584007913129639935,
-           "Cannot increase to MAX_UINT256";
+    assert  supply_ < 0x10000000000000000000000000000000000000000000000000000000000000000,
+           "Cannot increase to MAX_UINT256";
 	
 }
 
+
+/************** A specific rule **********************/
 // once the bounded supply rule shows a case where the close function can cause an increase of the
-// total supply to maxint, one can check what does it take to get to that situation  
+// total supply to maxint, one can check what does it take to get to that situation  
 rule full_scenario(uint id, uint payment, uint bidAmount) {
-	uint256 _supply = sinvoke totalSupply(); // total supply before
-	require (_supply < 100000); //start with a reasonable amount
 	env eNew;
+	uint256 _supply = sinvoke totalSupply(eNew); // total supply before
+	require (_supply < 100000); //start with a reasonable amount
 	sinvoke newAuction(eNew,id,payment);
 	
-	// get for info what are the fields of the generated auction
+	// get what are the fields of the generated auction
 	uint _prize;
 	uint _payment;
 	address _winner;
 	uint _bid_expiry;	
 	uint _end_time;
-	require (_prize,_payment,_winner,_bid_expiry,_end_time) == sinvoke getAuction(id);
+	require (_prize,_payment,_winner,_bid_expiry,_end_time) == sinvoke getAuction(eNew,id);
 	
 	env eBid;
 	// the interesting case is of a non privileged user
-	require eBid.msg.sender != sinvoke owner();
+	require eBid.msg.sender != sinvoke owner(eBid);
 	sinvoke bid(eBid,id,bidAmount);
 	
 	uint prize_;
@@ -46,7 +90,7 @@ rule full_scenario(uint id, uint payment, uint bidAmount) {
 	address winner_;
 	uint bid_expiry_;	
 	uint end_time_;
-	require (prize_,payment_,winner_,bid_expiry_,end_time_) == sinvoke getAuction(id);
+	require (prize_,payment_,winner_,bid_expiry_,end_time_) == sinvoke getAuction(eBid,id);
 
 	// did anything change?
 	if(_prize == prize_ && _payment==payment_ && _winner ==winner_ && _bid_expiry==bid_expiry_ && _end_time==end_time_) {
@@ -54,12 +98,12 @@ rule full_scenario(uint id, uint payment, uint bidAmount) {
 	}
 	
 	env eClose;
-	//can the melicious user do the close? 
+	//can the malicious user do the close? 
 	require eBid.msg.sender == eBid.msg.sender;
 	sinvoke close(eClose,id);
-	uint256 supply_ = sinvoke totalSupply(); 
+	uint256 supply_ = sinvoke totalSupply(eClose); 
 
-    assert  supply_ < 115792089237316195423570985008687907853269984665640564039457584007913129639935,
-           "Cannot increase to MAX_UINT256";
+    assert  supply_ < 0x10000000000000000000000000000000000000000000000000000000000000000,
+           "Cannot increase to MAX_UINT256";
 	
 }

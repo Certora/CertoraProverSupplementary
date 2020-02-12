@@ -1,1 +1,1 @@
- certoraRun.py  Auction.sol --verify Auction:Auction.spec
+ certoraRun.py  Auction.sol:System --verify System:Auction.spec
