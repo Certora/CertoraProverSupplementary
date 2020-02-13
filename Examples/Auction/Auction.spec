@@ -68,16 +68,14 @@ rule boundedSupplyDelta(method f) {
 rule boundedSupply(method f) {
     env e; //for every possible environment 
     uint256 _supply = sinvoke totalSupply(e); // total supply before
-	//start with a reasonable amount
-	//if we are already close to max_int than in one operation it is feasible to reach max_int
-	require(_supply < 10000000);
-    // invoke an arbitrary public function on an arbitrary input and take into account only cases that do not revert
+	
+	// invoke an arbitrary public function on an arbitrary input and take into account only cases that do not revert
     calldataarg arg;
     sinvoke f(e,arg);
 
     uint256 supply_ = sinvoke totalSupply(e); // total supply after
 
-    assert  supply_ <115792089237316195423570985008687907853269984665640564039457584007913129639935, "Cannot increase to MAX_UINT256";
+    assert  _supply != supply_ => supply_ <115792089237316195423570985008687907853269984665640564039457584007913129639935, "Cannot increase to MAX_UINT256";
     
 }
 

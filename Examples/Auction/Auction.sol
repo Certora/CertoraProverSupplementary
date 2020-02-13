@@ -2,7 +2,6 @@ pragma solidity ^0.5.0;
 contract TokenInterface {
 	function mint(address who, uint amount) internal;
 	function transferTo(address _to, uint256 _value) public returns (bool success);
-	uint256 public MAX_UINT256 = 2**256 - 1;
 	function getTotalSupply() public returns (uint256);
 }
 
