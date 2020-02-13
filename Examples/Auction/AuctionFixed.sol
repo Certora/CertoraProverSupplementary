@@ -2,7 +2,6 @@ pragma solidity ^0.5.0;
 contract TokenInterface {
 	function mint(address who, uint amount) internal;
 	function transferTo(address _to, uint256 _value) public returns (bool success);
-	uint256 public MAX_UINT256 = 2**256 - 1;
 	function getTotalSupply() public returns (uint256);
 }
 
@@ -98,6 +97,8 @@ contract Auction is TokenInterface {
 	function close(uint id)  public {
 		require(auctions[id].bid_expiry != 0
 				&& (auctions[id].bid_expiry < now || auctions[id].end_time < now));
+		// check that we do not reach to end of supply, and have at least for a similar auction
+		require(auctions[id].prize.safeAdd(auctions[id].prize) + getTotalSupply() >= getTotalSupply());
 		mint(auctions[id].winner, auctions[id].prize);
 		delete auctions[id];
 	}
