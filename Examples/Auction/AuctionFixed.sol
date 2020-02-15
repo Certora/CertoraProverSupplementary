@@ -97,7 +97,7 @@ contract Auction is TokenInterface {
 	function close(uint id)  public {
 		require(auctions[id].bid_expiry != 0
 				&& (auctions[id].bid_expiry < now || auctions[id].end_time < now));
-		// check that supply is not close to rach a limit, there is still enough to close another auction
+		// check that supply is not close to reach a limit, there is still enough to close another auction
 		require(auctions[id].prize.safeAdd(auctions[id].prize) + getTotalSupply() >= getTotalSupply());
 		mint(auctions[id].winner, auctions[id].prize);
 		delete auctions[id];
