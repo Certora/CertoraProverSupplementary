@@ -27,7 +27,7 @@ rule boundedSupply(method f) {
     
 }
 
-//A rule for verifying that any scenario proferemed by some sender does not decrease the balance of any other account.
+//A rule for verifying that any scenario preformed by some sender does not decrease the balance of any other account.
 rule senderCanOnlyIncreaseOthersBalance( method f, address sender, address other)
 {
 env e;//for every possible environment 

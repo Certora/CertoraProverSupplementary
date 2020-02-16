@@ -54,12 +54,15 @@ contract Token is TokenInterface {
 contract Auction is TokenInterface {
 /*
 
-	Implementation of a reverse auction where bidders offer to take decreasing prize amounts for a fixed payment. The bidder who has offered to take the lowest prize value is the winner. The auction terminates after a fixed amount of time, or if no one submits a new winning bid for one hour. Upon termination, the system mints an amount of tokens equal to the winning bid’s prize value, and transfers it to the winner.
+	Implementation of a reverse auction where bidders offer to take decreasing prize amounts for a fixed payment.
+	The bidder who has offered to take the lowest prize value is the winner.
+	The auction terminates after a fixed amount of time, or if no one submits a new winning bid for one hour.
+	Upon termination, the system mints an amount of tokens equal to the winning bid’s prize value, and transfers it to the winner.
 
 */
 	using SafeMath for uint256;
 	
-	//inling  code of Token so everything is in one file
+	
 	address public owner ;
 	modifier authorized { require(msg.sender == owner); _; }
 	
@@ -97,7 +100,7 @@ contract Auction is TokenInterface {
 	function close(uint id)  public {
 		require(auctions[id].bid_expiry != 0
 				&& (auctions[id].bid_expiry < now || auctions[id].end_time < now));
-		// check that supply is not close to rach a limit, there is still enough to close another auction
+		// check that supply is not close to reach a limit, there should be enough to close another auction
 		require(auctions[id].prize.safeAdd(auctions[id].prize) + getTotalSupply() >= getTotalSupply());
 		mint(auctions[id].winner, auctions[id].prize);
 		delete auctions[id];

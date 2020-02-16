@@ -18,7 +18,7 @@ rule withdraw_succeeds {
 
 rule transfer_reverts(address to, uint256 amount) {
    env e;
-   // invoke function transfer and assume - caller is w.msg.from
+   // invoke function transfer and assume - caller is e.msg.from
    uint256 balance = invoke getfunds(e.msg.sender);
    invoke transfer(e,to,amount);
    // check that transfer reverts if not enough funds
@@ -28,7 +28,7 @@ rule transfer_reverts(address to, uint256 amount) {
 rule others_can_only_increase(address other, method f) {
    env e;
    
-   //assume msg.sender is a different addres
+   //assume msg.sender is a different address
    require e.msg.sender != other;
    //get balance before
    uint256 _balance = sinvoke getfunds(other);
@@ -52,7 +52,7 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
 	require amount > 0;
 	sinvoke deposit(_e,amount);
 	
-	//any other trasaction beside withdraw by account
+	//any other transaction beside withdraw by account
 	env eF;
 	require (f.selector != withdraw().selector && f.selector!=transfer(address, uint256).selector) || eF.msg.sender!=account;
 	calldataarg arg; // any argument
@@ -60,12 +60,12 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
    
 	//account withdraws
 	env e_;
-	require e_.block.timestamp > _e.block.timestamp ; // The operation occured after the initial operation
+	require e_.block.timestamp > _e.block.timestamp ; // The operation occurred after the initial operation
 	require e_.msg.sender == account;
 	sinvoke withdraw(e_);
 	// check the erc balnce 
 	uint256 ercBalance = sinvoke _ercBalance(e_);
-	assert ercBalance >= amount, "should have at least what have been deposisted";
+	assert ercBalance >= amount, "should have at least what have been deposited";
 	
 
 }
@@ -97,5 +97,5 @@ rule additiveTransfer {
 	sinvoke transfer(e1, to, a+b) at init ;
 	balanceToCase2 = sinvoke getfunds(to);
 	balanceFromCase2 = sinvoke getfunds(from);
-	assert balanceToCase1 == balanceToCase2 && balanceFromCase1==balanceFromCase2, "Expected Transfer to be Additive" ;
+	assert balanceToCase1 == balanceToCase2 && balanceFromCase1==balanceFromCase2, "expected transfer to be additive" ;
 }
