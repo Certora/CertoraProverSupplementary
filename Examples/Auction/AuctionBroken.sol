@@ -1,8 +1,15 @@
 pragma solidity ^0.5.0;
+/*
+This example is based on a real bug from test version of the Maker MCD system 
+see https://www.certora.com/blog/why-testing-is-not-enough-for-million-dollar-code.html
+
+*/
+
+
 contract TokenInterface {
 	function mint(address who, uint amount) internal;
 	function transferTo(address _to, uint256 _value) public returns (bool success);
-	function getTotalSupply() public returns (uint256);
+	function getTotalSupply() public view returns (uint256);
 }
 
 library SafeMath {
@@ -12,7 +19,7 @@ library SafeMath {
         return c;
     }
 
-	function safeSub(uint256 x, uint256 y) internal returns(uint256) {
+	function safeSub(uint256 x, uint256 y) internal pure returns (uint256) {
 		assert(x >= y);
 		uint256 z = x - y;
 		return z;
@@ -20,7 +27,6 @@ library SafeMath {
 }
 
 contract Token is TokenInterface {
-
 	using SafeMath for uint256;
 	
     mapping (address => uint) balances;
@@ -32,7 +38,7 @@ contract Token is TokenInterface {
 	}
   
 	function transferTo(address _to, uint256 _value) public returns (bool success) {
-		if (balances[msg.sender] >= _value  && _value > 0) {
+		if (balances[msg.sender] >= _value && _value > 0) {
 			balances[_to] = balances[_to].safeAdd(_value);
 			balances[msg.sender] = balances[msg.sender].safeSub(_value);
 			return true;
@@ -44,16 +50,14 @@ contract Token is TokenInterface {
     function balanceOf(address _owner) public view returns (uint) {
         return balances[_owner];
     }
-
-	function getTotalSupply() public returns (uint256) {
+	
+	function getTotalSupply() public view returns (uint) {
 		return totalSupply;
 	}
-
 }
 
-contract Auction is TokenInterface {
+contract AuctionImpl is TokenInterface {
 /*
-
 	Implementation of a reverse auction where bidders offer to take decreasing prize amounts for a fixed payment.
 	The bidder who has offered to take the lowest prize value is the winner.
 	The auction terminates after a fixed amount of time, or if no one submits a new winning bid for one hour.
@@ -75,20 +79,20 @@ contract Auction is TokenInterface {
 	
 	mapping (uint => AuctionStrcut) auctions;
 	
-	function getAuction(uint id) public returns (uint,uint,address,uint,uint) {
-		return (auctions[id].prize,auctions[id].payment,auctions[id].winner,auctions[id].bid_expiry,auctions[id].end_time);
+	function getAuction(uint id) public view returns (uint,uint,address,uint,uint) {
+		return (auctions[id].prize, auctions[id].payment, auctions[id].winner,auctions[id].bid_expiry, auctions[id].end_time);
 	}
 		
 	function newAuction(uint id, uint payment) public authorized {
 		require(auctions[id].end_time == 0); //check id in not occupied
-		auctions[id] = AuctionStrcut(2**256-1,payment,owner, 0,now+1 days);
+		auctions[id] = AuctionStrcut(2**256-1,payment,owner, 0, now+1 days);
                          // arguments: prize, payment, winner, bid_expiry, end_time
 	}
     
 	function bid(uint id, uint b) public {
-		require(b<auctions[id].prize); // prize can only decrease
+		require(b < auctions[id].prize); // prize can only decrease
 		// new winner pays by repaying last winner
-		require(transferTo(auctions[id].winner,auctions[id].payment));
+		require(transferTo(auctions[id].winner, auctions[id].payment));
 
 		// update new winner with new prize
 		auctions[id].prize = b;
@@ -98,14 +102,15 @@ contract Auction is TokenInterface {
   
 	function close(uint id)  public {
 		require(auctions[id].bid_expiry != 0
-				&& (auctions[id].bid_expiry < now || auctions[id].end_time < now));
+				&& (auctions[id].bid_expiry < now || 
+					auctions[id].end_time < now));
 		mint(auctions[id].winner, auctions[id].prize);
 		delete auctions[id];
 	}
   
 }
 
-contract System is Token, Auction {
+contract System is Token, AuctionImpl {
 
 }
 

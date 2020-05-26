@@ -93,7 +93,7 @@ No effect on unsuccessful vote operation
 	ㄱvote(x,f,s,t) 
 	{points(c) = c_points ⋀ voted(y) = b} 
  */
-	rule noEffect(address x, address f, address s, address t) {
+	rule noEffectOnRevert(address x, address f, address s, address t) {
 		env e;
 		address c;
 		address y;
@@ -129,7 +129,7 @@ Commutative of votes
 		bool y_voted_P2 = sinvoke voted(y);
 		address w2 = sinvoke winner();
 		assert ( c_points_P1 == c_points_P2 &&  y_voted_P1 == y_voted_P2); 
-		//assert (w1 == w2); //we can not demand this the order is imporant in case of a tie 
+		//assert (w1 == w2); //we can not demand this the order is important in case of a tie 
 
 	}
 /*
@@ -142,7 +142,7 @@ Commutative of votes
 
 /*
 Resolvability criterion
-	For every (possibly tied) winner in a result, there must exist a way for one added vote to make that winner unique
+	For every possibly tied winner in a result, there must exist a way for one added vote to make that winner unique
 	https://en.wikipedia.org/wiki/Resolvability_criterion
 	∃address f,s,t
 	{∃address c, c≠winner() ⋀ points(winner()) = points(c) } vote(x,f,s,t) { ∀address c. points(c) < points(winner()) } 
@@ -156,14 +156,13 @@ Resolvability criterion
 		require (c!=w);
 		require ( sinvoke points(c) == sinvoke points(w));
 		//the following does not pass:
-		//assert (exists address f. exists address s. exists address t. sinvoke  vote(e,f,s,t) &&  (forall address c1. sinvoke points(c1) < sinvoke pointsOfWinner()));
-		//if this fail then we found an exists
+		
 		
 		sinvoke  vote(e,f,s,t);
 		address w1 = sinvoke winner();
 		address c1; 
-		// this is not the same, it finds a state and for that state it finds an option to get out of the tie.
-		// It does not implies that for every possible tie exsist a vote that will change to unique winner
+		// find a state and for that state it finds an option to get out of the tie.
+		// It does not implies that for every possible tie exists a vote that will change to unique winner
 		assert ( c1!= w1 => sinvoke points(c1) < sinvoke pointsOfWinner());
 	}
 
@@ -193,7 +192,8 @@ Participation criterion
 		require(x==e.msg.sender);
 		address w1 = sinvoke winner();
 		//safe assumption intgerity of winner 
-		assert(forall address c. (sinvoke points(w1) >= sinvoke points(c))); //todo - this is not working
+		require(forall address c. (sinvoke points(w1) >= sinvoke points(c))); //todo - this is not working
+		assert false, "after require";
 		sinvoke  vote(e,f,s,t);
 		address w2 = sinvoke winner();
 		assert( w1==f => w2==f);
@@ -203,11 +203,12 @@ Participation criterion
 
 /*
 Later-no-harm criterion (expected violation)
+https://en.wikipedia.org/wiki/Later-no-harm_criterion
 a voter giving an additional ranking or positive rating to a less-preferred candidate can not cause a more-preferred candidate to lose
 
 		{f=winner} vote(x,f,s,t) {f=winner()}
 */
-	/**** this should fail ********/
+	/**** this should fail - Borda Count does not obey this criterion ********/
 	rule laterNoHarmCriterion(address x, address f, address s, address t, address s2, address t2) {
 		env e;
 		require(x==e.msg.sender);

@@ -1,0 +1,2 @@
+# Certora Prover Supplementary Material
+An example of the [Borda count election algorithm](https://en.wikipedia.org/wiki/Borda_count) with spec file for verification of specific properties and some well known [election criteria](https://en.wikipedia.org/wiki/Comparison_of_electoral_systems) 

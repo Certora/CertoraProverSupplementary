@@ -15,19 +15,23 @@ contract Bank {
     }
 
     function withdraw() public returns (bool success)  {
-		uint256 amount = getfunds(msg.sender);
+		uint256 amount = getFunds(msg.sender);
 		funds[msg.sender] = 0;
 		success = msg.sender.send(amount);
 		totalFunds -=amount;
     }
 	
-	function getfunds(address account) public returns (uint256) {
+	function getFunds(address account) public view returns (uint256) {
 		return funds[account];
 	}
 	
-	function getTotalFunds() public returns (uint256) {
+	function getTotalFunds() public view returns (uint256) {
 		return totalFunds;
 	}
 
 	function init_state() public {}
+	
+	function getEthBalance(address account) public view returns (uint256){
+		return account.balance;
+	}
 }

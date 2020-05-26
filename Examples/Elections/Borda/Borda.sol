@@ -23,6 +23,12 @@ contract Borda {
   // current max points 
   uint256 public pointsOfWinner; 
 
+
+constructor() public {
+  winner = address(0);
+  pointsOfWinner = 0;
+}
+
 function vote(address f, address s, address t) public returns(bool) {
   require(!_voted[msg.sender],"already voted");
   require( f != s && f != t && s != t, "candidates are not different");
