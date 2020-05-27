@@ -1,1 +1,1 @@
-certoraRun.py Borda.sol:Borda --verify Borda:Borda.spec
+certoraRun Borda.sol:Borda --verify Borda:Borda.spec

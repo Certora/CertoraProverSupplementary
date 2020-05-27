@@ -1,1 +1,1 @@
-certoraRun.py BankBroken.sol:Bank --verify Bank:Bank.spec
+certoraRun BankBroken.sol:Bank --verify Bank:Bank.spec

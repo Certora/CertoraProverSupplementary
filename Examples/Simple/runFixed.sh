@@ -1,1 +1,1 @@
-certoraRun.py InvertibleFixed.sol:Invertible --verify Invertible:Invertible.spec
+certoraRun InvertibleFixed.sol:Invertible --verify Invertible:Invertible.spec
