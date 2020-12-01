@@ -1,4 +1,4 @@
-pragma specify 0.1
+ pragma specify 0.1
 methods {
 	init_state()
 	getFunds(address) returns uint256 envfree
