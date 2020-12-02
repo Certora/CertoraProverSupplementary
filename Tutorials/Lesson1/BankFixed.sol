@@ -15,8 +15,8 @@ library SafeMath {
 contract Bank {
 	using SafeMath for uint256;
 	
-	mapping (address => uint256) public funds;
-	uint256 public totalFunds;
+	mapping (address => uint256) private funds;
+	uint256 private totalFunds;
 	
 	function deposit(uint256 amount) public payable {
 		require(msg.sender != address(0));
@@ -27,8 +27,9 @@ contract Bank {
 	function transfer(address to, uint256 amount) public {
 		require(to!= address(0));
 		require(funds[msg.sender] > amount);
+		uint256 fundsTo = funds[to];
 		funds[msg.sender] = funds[msg.sender].safeSub(amount);
-		funds[to] = funds[to].safeAdd(amount);
+		funds[to] = fundsTo.safeAdd(amount);
 		
 	}
 	

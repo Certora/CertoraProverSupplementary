@@ -15,14 +15,14 @@
 **/
 
 
-rule totalFundsAfterDeposit(uint256 amount, uint256 userFundsAfter, uint256 totalAfter ) {
+rule totalFundsAfterDeposit(uint256 amount) {
 	env e; 
 	
 	
 	deposit(e, amount);
 	
-	require userFundsAfter == getFunds(e, e.msg.sender);
-	require totalAfter == getTotalFunds(e);
+	uint256 userFundsAfter = getFunds(e, e.msg.sender);
+	uint256 totalAfter = getTotalFunds(e);
 	
 	// Verify that the total funds of the system is at least as the current funds of the msg.sender
 	assert ( totalAfter >=  userFundsAfter, "Total funds is less than a user funds " );
@@ -30,15 +30,15 @@ rule totalFundsAfterDeposit(uint256 amount, uint256 userFundsAfter, uint256 tota
 
 
 
-rule totalFundsAfterDepositWithPrecondition(uint256 amount, uint256 userFundsAfter, uint256 totalAfter ) {
+rule totalFundsAfterDepositWithPrecondition(uint256 amount) {
 	env e; 
 	
 	// Assume that in the current state before calling deposit, the total funds is at least as the user funds
 	require  getTotalFunds(e) >= getFunds(e, e.msg.sender);
 	deposit(e, amount);
 	
-	require userFundsAfter == getFunds(e, e.msg.sender);
-	require totalAfter == getTotalFunds(e);
+	uint256 userFundsAfter = getFunds(e, e.msg.sender);
+	uint256 totalAfter = getTotalFunds(e);
 	
 	// Verify that the total funds of the system is at least as the current funds of the msg.sender
 	assert ( totalAfter >=  userFundsAfter, "Total funds is less than a user funds " );
