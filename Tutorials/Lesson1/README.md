@@ -89,11 +89,10 @@ run:
 certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --settings -rule=totalFundsAfterDeposit
 ```
 
-Notice the useful option of running one rule at a time.  
+Notice the useful option of `-rule` to run one rule at a time.  
 A violation is found, do you understand why?
 
 
-Running one rule at a time is a useful option.
 A violation is found, do you understand why?
 Adding additional variables to the rule can help understand the counter example, try adding `userFundsBefore` and `totalBefore`
 
