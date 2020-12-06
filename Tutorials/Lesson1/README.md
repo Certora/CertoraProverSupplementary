@@ -19,18 +19,18 @@ implemented with a mapping from users to their funds, and the total funds deposi
 
 ## A basic rule
 
-For the function 'deposit' a basic property is:  
+Thinking about the function `deposit`, a basic property is:  
   
   #### _***P1 Correct deposit functionality***: The balance of the beneficiary is increased appropriately_  
 
 The rule in [integrityOfDeposit.spec](IntegrityOfDeposit.spec) verifies this property. 
-It verifies that the funds of msg.sender is the sum of his funds before and the amount passed.  
+It verifies that the funds of `msg.sender` is the sum of his funds before and the amount passed.  
 Formal verification can provide complete coverage of the input space, giving guarantees beyond what is possible from testing alone.
 First, all possible inputs to the deposit function are taken into account.
-Also, all possible calling context (msg.sender , timestamp, block number, ...) represented in the env structure. 
+Also, all possible calling context (msg.sender , timestamp, block number, ...) represented in the `env` structure. 
 Also, the initial state can contain any value for the current funds of the msg sender.
 
-To run this rule:
+To run the Certora Prover on this contract, run the following command line:
 
 ```sh
 certoraRun Bank.sol:Bank --verify Bank:IntegrityOfDeposit.spec
@@ -43,14 +43,14 @@ Local solidity files are compiled, specification file is check for syntax error,
 Various information is printed to the console and an email is sent when the process is finished.
 At the end, the output will look similar to this:
 ```
-…
+. . . 
 Status page: https://vaas-stg.certora.com/jobStatus/23658/e145eb5d7d5f2dea1f72?anonymousKey=f49a8d71d3d17288d8405c015
 Verification results: https://vaas-stg.certora.com/output/23658/e145eb5d7d5f2dea1f72/?anonymousKey=f49a8d71d3d17288d8405c0150
 Prover found violations:
 [rule] callTraceProblem
 [rule] integrityOfDeposit
 ```
-Follow the Verification results to see the results.
+Follow the Verification results link to see the results.
 
 Certora Prover help understanding violation of properties. 
 First you see a table with the verification results. ![results](images/results.jpg) 
