@@ -16,7 +16,7 @@
 **/
 
 
-rule validityOftotalFunds(method f ) {
+rule validityOfTotalFunds(method f) {
 	env e; 
 	
 	require  getTotalFunds(e) >= getFunds(e, e.msg.sender);
