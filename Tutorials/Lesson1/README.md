@@ -83,7 +83,7 @@ No violations were found. Great!
 
 ## Preconditions and Helper Variables
 
-Let’s define [another property](sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
+Let’s define [another property](Sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
   
  #### _***P2 Sanity of deposit***: total funds >= funds of a single user_
   
