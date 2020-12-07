@@ -73,14 +73,14 @@ So, what's the bug?
 **The rule does not hold when an overflow occurs.**
 
 
-Lets “fix” the overflow bug in the code and rerun:
+Let's "fix" the overflow bug in the code and rerun:
 ```sh 
 certoraRun BankFixed.sol:Bank --verify Bank:IntegrityOfDeposit.spec
 ```
 
 
-No violation found. great!   
-Let’s continue to [another property](sanity.spec) and verify that after deposit the totalFunds in the system is at least as the funds of the msg.sender:  
+No violations were found. Great!   
+Let’s define [another property](sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
   
  #### _***P2 Sanity of deposit***: total funds >= funds of a single user_
   
@@ -91,25 +91,27 @@ run:
 certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --settings -rule=totalFundsAfterDeposit
 ```
 
-Notice the useful option of `-rule` to run one rule at a time.  
-A violation is found, do you understand why?
+Notice the useful option of `-rule` to run one rule at a time.
 
+A violation is found. 
+Do you understand why?
+Adding additional variables to the rule can help understand the counter-example. 
 
-A violation is found, do you understand why?
-Adding additional variables to the rule can help understand the counter example, try adding `userFundsBefore` and `totalBefore`
-
-As we discussed, the tool assumes all possible input state as a starting state. So, the rule is violated in the case that the in the initial state totalFunds is less than the current funds of the msg.sender. 
-By adding preconditions, you can eliminate infeasible states and put constraints on values. 
+Try adding the ***helper variables*** `userFundsBefore` and `totalBefore`.
+As we discussed, the tool assumes all possible input states as a starting state. 
+The rule is violated when the initial state's totalFunds is less than the current funds of msg.sender. 
+By adding ***preconditions***, you can eliminate infeasible states and put constraints on values. 
 rule `totalFundsAfterDepositWithPrecondition` has the constraint 
 `require  getTotalFunds(e) >= getFunds(e, e.msg.sender);`
 
-It assumes that in the initial state before calling deposit, the total funds is at least as the user funds
-
+The prover will now assume that in the initial state before calling deposit, the total funds are at least the user funds.
 ```sh
 certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --msg “running with precondition”
 ```
-Use the `--msg` flag to add a message description to your run. You will see the message in the mail and help you recognize one run form the rest.
 
+Use the `--msg` flag to add a message description to your run. 
+It can help you recognize a specific run.
+You will see the message in the run results mail.
 
 
 This property can be generalized to hold on all functions
