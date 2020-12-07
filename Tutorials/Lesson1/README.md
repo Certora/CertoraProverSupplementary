@@ -65,8 +65,11 @@ Click the rule name to see a counter-example violating the rule.
 
 The counter-example shows values of the rule's parameters and variables and a call trace.
 Drill down into the call trace to see which functions were called.
-Notice the values of variables.  
-The amount deposited in `deposit(e, amount);` is MAX_UNIT, the `uint256 fundsBefore = getFunds(e, e.msg.sender)` is 1 and the ` fundsAfter = getFunds(e, e.msg.sender)` is zero. 
+Notice the values of variables: 
+* The amount deposited in `deposit(e, amount);` is MAX_UNIT.
+* The `uint256 fundsBefore = getFunds(e, e.msg.sender)` is one.
+* The ` fundsAfter = getFunds(e, e.msg.sender)` is zero. 
+
 So, what's the bug?  
 **The rule does not hold when an overflow occurs.**
 
