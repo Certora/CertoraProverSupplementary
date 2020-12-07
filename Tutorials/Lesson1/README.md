@@ -114,14 +114,14 @@ It can help you recognize a specific run.
 You will see the message in the run results mail.
 
 
-This property can be generalized to hold on all functions
+This property can be generalized to hold to all functions.
 
  #### _***P3 Sanity of total funds: total funds >= funds of a single user_
 
-To do so we introduce the notion of parametric rules.  
-In order to simulate the execution of all functions in the main contract, 
-you can define a method variable, `method f `, as a parameter to the rule or as a local variable.
-Most common usage is as follows to simulate any function on any arguments
+To do so, we introduce the notion of ***parametric rules***.  
+To simulate the execution of all functions in the main contract, 
+you can define a method variable, `method f`, as a parameter to the rule or a local variable.
+The most common usage is to simulate any function on any arguments, as we show next.
 ```
 calldataarg arg; // any argument
 sinvoke f(e, arg); //simulate only non reverting paths
@@ -130,25 +130,23 @@ Run the parametric rule from [parametric.spec](parametric.spec)
 ```sh
 certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
 ```
-The rule is thumbs-up only if it was verified on all methods. 
-For every function in the main contract, an inner rule is created, and shown in the lower table.
-Click on the function name to see the counter example
-See how many issues this rules detects. Are they all fixed?
+
+The rule would be thumbs-up only if it was verified on all methods. 
+For every function in the main contract, an inner rule is created, as shown in the lower table.
+Click on the function name to see the counter-example.
+See how many issues this rule detects. 
+Are they all fixed?
+
 ```sh
  	certoraRun BankFixed.sol:Bank --verify Bank:Parametric.spec
 ```
 
-The generalization of this rule to all functions have found another issue in transfer. 
-One can transfer to himself to gain more assets. 
+By generalizing this rule to all functions, we discovered another issue in `transfer`. 
+One can transfer funds to himself to gain more assets. 
 
 Parametric rules enable expressing reusable and concise correctness conditions. 
-Note that they are not dependent on the specification, can be easily integrated into the CI to verify changes to the code including signature change, adding another function and  implementation changes. 
-
-
-
-
-
-
+Note that they are not dependent on the specification. 
+You can integrate them easily into the CI to verify changes to the code, including signature changes, new functions, and implementation changes. 
 
 
 
