@@ -25,6 +25,6 @@ rule validityOfTotalFunds(method f) {
    	calldataarg arg; // any argument
 	sinvoke f(e, arg); // simulate only non reverting paths 
 	
-	assert ( getTotalFunds(e) >= getFunds(e, e.msg.sender), "Total funds is less than a user funds " );
+	assert ( getTotalFunds(e) >= getFunds(e, e.msg.sender), "Total funds are less than user funds" );
 }
 
