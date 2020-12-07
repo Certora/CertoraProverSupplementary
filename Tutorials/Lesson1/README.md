@@ -52,12 +52,12 @@ Prover found violations:
 [rule] integrityOfDeposit
 ```
 Follow the Verification results link to see the results.
+You see a table with the verification results. ![results](images/results.jpg) 
+For each rule, it either displays a thumbs-up when it is formally proved or a thumbs-down when it is violated.
+
+## Fixing rule violations
 
 Certora Prover helps in understanding violations of properties. 
-You see a table with the verification results. ![results](images/results.jpg) 
-
-
-For each rule, it either displays a thumbs-up when it is formally proved or a thumbs-down when it is violated.
 
 Click the rule name to see a counter-example violating the rule.
 
@@ -80,7 +80,10 @@ certoraRun BankFixed.sol:Bank --verify Bank:IntegrityOfDeposit.spec
 ```
 
 
-No violations were found. Great!   
+No violations were found. Great!
+
+## Preconditions and Helper Variables
+
 Let’s define [another property](sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
   
  #### _***P2 Sanity of deposit***: total funds >= funds of a single user_
@@ -102,8 +105,8 @@ Try adding the ***helper variables*** `userFundsBefore` and `totalBefore`.
 As we discussed, the tool assumes all possible input states as a starting state. 
 The rule is violated when the initial state's totalFunds is less than the current funds of msg.sender. 
 By adding ***preconditions***, you can eliminate infeasible states and put constraints on values. 
-rule `totalFundsAfterDepositWithPrecondition` has the constraint 
-`require  getTotalFunds(e) >= getFunds(e, e.msg.sender);`
+Rule `totalFundsAfterDepositWithPrecondition` has the constraint 
+`require  getTotalFunds(e) >= getFunds(e, e.msg.sender);`.
 
 The prover will now assume that in the initial state before calling deposit, the total funds are at least the user funds.
 ```sh
@@ -114,6 +117,7 @@ Use the `--msg` flag to add a message description to your run.
 It can help you recognize a specific run.
 You will see the message in the run results mail.
 
+## Parametric rules
 
 This property can be generalized to hold to all functions.
 
