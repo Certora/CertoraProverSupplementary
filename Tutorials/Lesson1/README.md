@@ -21,7 +21,7 @@ The contract has a mapping from users to their funds, and the total funds deposi
 
 Thinking about the function `deposit`, a basic property is:  
   
-  #### _***P1 Correct deposit functionality***: The balance of the beneficiary is increased appropriately_  
+  #### _***P1: Correct deposit functionality***: The balance of the beneficiary is increased appropriately_  
 
 The rule in [integrityOfDeposit.spec](IntegrityOfDeposit.spec) verifies this property. 
 It verifies that the funds of `msg.sender` are his funds before plus the amount deposited.  
@@ -85,7 +85,7 @@ No violations were found. Great!
 
 Let’s define [another property](Sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
   
- #### _***P2 Sanity of deposit***: total funds >= funds of a single user_
+ #### _***P2: Sanity of deposit***: total funds >= funds of a single user_
   
 
 
@@ -120,7 +120,7 @@ You will see the message in the run results mail.
 
 This property can be generalized to hold to all functions.
 
- #### _***P3 Sanity of total funds: total funds >= funds of a single user_
+ #### _***P3: Sanity of total funds***: total funds >= funds of a single user_
 
 To do so, we introduce the notion of ***parametric rules***.  
 To simulate the execution of all functions in the main contract, 
