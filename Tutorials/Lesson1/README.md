@@ -3,19 +3,19 @@
 
 ## Overview of the technology
 The Certora Prover is based on well-studied techniques from the formal verification community. 
-Specifications define a set of rules that call into the contract under analysis and make various assertions about its behavior. 
-Together with the contract under analysis, these rules are compiled to a logical formula called a verification condition, which is then proved or disproved by an SMT solver. 
+*Specifications* define a set of rules that call into the contract under analysis and make various assertions about its behavior. 
+Together with the contract under analysis, these rules are compiled to a logical formula called a *verification condition*, which is then proved or disproved by an SMT solver. 
 If the rule is disproved, the solver also provides a concrete test case demonstrating the violation.
 
-The rules of the specification play a crucial role in the analysis. Without good rules, only very shallow properties can be checked (e.g. that no assertions in the contract itself are violated). 
-To make effective use of Certora Prover, users must write rules that describe the high-level properties they wish to check of their contract. 
-Here we will learn to think and write high-level properties
+The rules of the specification play a crucial role in the analysis. Without adequate rules, only very basic properties can be checked (e.g., no assertions in the contract itself are violated). 
+To effectively Certora Prover, users must write rules that describe the high-level properties they wish to verify on their contracts. 
+Here we will learn how to think about and write high-level properties.
 
 
 ## Example
 
-Lets take as an example a very simple Bank implementation ([Bank.sol](Bank.sol))
-implemented with a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
+Lets take as an example a straightforward simple bank implementation ([Bank.sol](Bank.sol)).
+The contract has a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
 
 ## A basic rule
 
