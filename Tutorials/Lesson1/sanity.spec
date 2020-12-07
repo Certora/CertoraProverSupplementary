@@ -25,7 +25,7 @@ rule totalFundsAfterDeposit(uint256 amount) {
 	uint256 totalAfter = getTotalFunds(e);
 	
 	// Verify that the total funds of the system is at least the current funds of the msg.sender.
-	assert ( totalAfter >=  userFundsAfter, "Total funds is less than a user funds " );
+	assert ( totalAfter >=  userFundsAfter, "Total funds are less than a user's funds " );
 }
 
 
@@ -41,6 +41,6 @@ rule totalFundsAfterDepositWithPrecondition(uint256 amount) {
 	uint256 totalAfter = getTotalFunds(e);
 	
 	// Verify that the total funds of the system is at least the current funds of the msg.sender.
-	assert ( totalAfter >=  userFundsAfter, "Total funds is less than a user funds " );
+	assert ( totalAfter >=  userFundsAfter, "Total funds are less than a user's funds " );
 }
 
