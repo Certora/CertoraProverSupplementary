@@ -1,7 +1,7 @@
 # Certora Prover - Lesson 1 
 
 
-## Overview of the technology
+## Technology Overview 
 The Certora Prover is based on well-studied techniques from the formal verification community. 
 ***Specifications*** define a set of rules that call into the contract under analysis and make various assertions about its behavior. 
 Together with the contract under analysis, these rules are compiled to a logical formula called a ***verification condition***, which is then proved or disproved by an SMT solver. 
@@ -17,7 +17,7 @@ Here we will learn how to think about and write high-level properties.
 Let's take as an example a straightforward simple bank implementation ([Bank.sol](Bank.sol)).
 The contract has a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
 
-## A basic rule
+## A Basic Rule
 
 Thinking about the function `deposit`, a basic property is:  
   
@@ -55,7 +55,7 @@ Follow the Verification results link to see the results.
 You see a table with the verification results. ![results](images/results.jpg) 
 For each rule, it either displays a thumbs-up when it is formally proved or a thumbs-down when it is violated.
 
-## Fixing rule violations
+## Understanding Rule Violations
 
 Certora Prover helps in understanding violations of properties. 
 
@@ -116,7 +116,7 @@ Use the `--msg` flag to add a message description to your run.
 It can help you recognize a specific run.
 You will see the message in the run results mail.
 
-## Parametric rules
+## Parametric Rules
 
 This property can be generalized to hold to all functions.
 
