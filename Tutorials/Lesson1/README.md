@@ -8,14 +8,14 @@ These rules, together with the contract under analysis, are compiled to a logica
 If the rule is disproved, the solver also provides a concrete test case demonstrating the violation.
 
 The rules of the specification play a crucial role in the analysis. Without good rules, only very shallow properties can be checked (e.g. that no assertions in the contract itself are violated). 
-To make effective use of Certora Prover, users must write rules that describe the high-level properties they wish to check of their contract. 
+To make effective use of Certora Prover, users must write rules that describe the high-level properties they wish to verify on their contract. 
 Here we will learn to think and write high-level properties
 
 
 ## Example
 
-Lets take as an example a very simple Bank implementation ([Bank.sol](Bank.sol))
-implemented with a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
+Let's take as an example a straightforward bank implementation ([Bank.sol](Bank.sol)).
+The contract has a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
 
 ## A basic rule
 
