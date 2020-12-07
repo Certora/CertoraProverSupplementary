@@ -131,7 +131,7 @@ The most common usage is to simulate any function on any arguments, as we show n
 calldataarg arg; // any argument
 sinvoke f(e, arg); //simulate only non reverting paths
 ```
-Run the parametric rule from [parametric.spec](parametric.spec)
+Run the parametric rule from [parametric.spec](Parametric.spec)
 ```sh
 certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
 ```
