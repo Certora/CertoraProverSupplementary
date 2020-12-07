@@ -1,10 +1,10 @@
 # Certora Prover Lesson 1 
 
 
-## Overview of technology
+## Overview of the technology
 The Certora Prover is based on well-studied techniques from the formal verification community. 
-Specifications define a set of rules that call into the contract under analysis and make various assertions about their behavior. 
-These rules, together with the contract under analysis, are compiled to a logical formula called a verification condition, which is then proved or disproved by an SMT solver. 
+Specifications define a set of rules that call into the contract under analysis and make various assertions about its behavior. 
+Together with the contract under analysis, these rules are compiled to a logical formula called a verification condition, which is then proved or disproved by an SMT solver. 
 If the rule is disproved, the solver also provides a concrete test case demonstrating the violation.
 
 The rules of the specification play a crucial role in the analysis. Without good rules, only very shallow properties can be checked (e.g. that no assertions in the contract itself are violated). 
