@@ -27,7 +27,7 @@ The rule in [integrityOfDeposit.spec](IntegrityOfDeposit.spec) verifies this pro
 It verifies that the `deposit` operation increases the funds of `msg.sender` by the deposited amount.  
 Formal verification can provide complete coverage of the input space, giving guarantees beyond what is possible from testing alone.
 This means that all possible inputs to the deposit function (all possible deposited amounts) are taken into account. 
-Additionally all possible calling contexts are taken into account. Certora prover captures the calling context in the struct variable `env`. Thus declaration of a single `env` variable suffices to capture all aspects of the calling contexts, but they can also be addressed individually.
+Additionally, all possible calling contexts are taken into account. Certora prover represents the calling context through the struct variable `env`. Declaring a single `env` variable suffices to capture all aspects of the calling contexts, but they can also be addressed individually.
 Some example aspects of the calling context are:
  - "who is the depositor?" (`env.msg.sender`)
  - "what was the initial balance of the depositor?" (`env.msg.sender.balance`)
