@@ -14,7 +14,7 @@ Here we will learn how to think about and write high-level properties.
 
 ## Example
 
-Lets take as an example a straightforward simple bank implementation ([Bank.sol](Bank.sol)).
+Let's take as an example a straightforward simple bank implementation ([Bank.sol](Bank.sol)).
 The contract has a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
 
 ## A basic rule
@@ -73,8 +73,7 @@ Notice the values of variables:
 So, what's the bug?  
 **The rule does not hold when an overflow occurs.**
 
-
-Let's "fix" the overflow bug in the code and rerun:
+Let's “fix” the overflow bug in the code and rerun:
 ```sh 
 certoraRun BankFixed.sol:Bank --verify Bank:IntegrityOfDeposit.spec
 ```
@@ -112,6 +111,7 @@ The prover will now assume that in the initial state before calling deposit, the
 ```sh
 certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --msg “running with precondition”
 ```
+Use the `--msg` flag to add a message description to your run. You will see the message in the mail and help you recognize one run form the rest.
 
 Use the `--msg` flag to add a message description to your run. 
 It can help you recognize a specific run.
@@ -135,13 +135,11 @@ Run the parametric rule from [parametric.spec](Parametric.spec)
 ```sh
 certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
 ```
-
 The rule would be thumbs-up only if it was verified on all methods. 
 For every function in the main contract, an inner rule is created, as shown in the lower table.
 Click on the function name to see the counter-example.
 See how many issues this rule detects. 
 Are they all fixed?
-
 ```sh
  	certoraRun BankFixed.sol:Bank --verify Bank:Parametric.spec
 ```
