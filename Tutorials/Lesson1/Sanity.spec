@@ -18,6 +18,9 @@
 rule totalFundsAfterDeposit(uint256 amount) {
 	env e; 
 	
+	// Additional varaibles to aid in understanding violation
+	uint256 userFundsBefore = getFunds(e, e.msg.sender);
+	uint256 totalBefore = getTotalFunds(e);
 	
 	deposit(e, amount);
 	

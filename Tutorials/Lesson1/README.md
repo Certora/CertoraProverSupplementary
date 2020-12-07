@@ -91,7 +91,7 @@ Let’s define [another property](Sanity.spec) and verify that after deposit, th
 
 run:  
 ```sh
-certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --settings -rule=totalFundsAfterDeposit
+certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --settings -rule=totalFundsAfterDeposit
 ```
 
 Notice the useful option of `-rule` to run one rule at a time.
@@ -109,7 +109,7 @@ Rule `totalFundsAfterDepositWithPrecondition` has the constraint
 
 The prover will now assume that in the initial state before calling deposit, the total funds are at least the user funds.
 ```sh
-certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --msg “running with precondition”
+certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --msg “running with precondition”
 ```
 
 Use the `--msg` flag to add a message description to your run. 
@@ -132,22 +132,25 @@ sinvoke f(e, arg); //simulate only non reverting paths
 ```
 Run the parametric rule from [parametric.spec](Parametric.spec)
 ```sh
-certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
+certoraRun BankFixed.sol:Bank --verify Bank:Parametric.spec
 ```
 The rule would be thumbs-up only if it was verified on all methods. 
 For every function in the main contract, an inner rule is created, as shown in the lower table.
 Click on the function name to see the counter-example.
-See how many issues this rule detects. 
-Are they all fixed?
-```sh
- 	certoraRun BankFixed.sol:Bank --verify Bank:Parametric.spec
-```
 
 By generalizing this rule to all functions, we discovered another issue in `transfer`. 
+Again, adding local variables can aid in understanding violations.
 One can transfer funds to himself to gain more assets. 
 
+Run this rule on the original Bank version: 
+```sh
+ 	certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
+```
+
+Notice that this rule uncover the bug detected by P1: integrity of deposit.
+
 Parametric rules enable expressing reusable and concise correctness conditions. 
-Note that they are not dependent on the specification. 
+Note that they are not dependent on the implementation. 
 You can integrate them easily into the CI to verify changes to the code, including signature changes, new functions, and implementation changes. 
 
 
