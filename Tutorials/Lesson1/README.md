@@ -3,8 +3,8 @@
 
 ## Overview of the technology
 The Certora Prover is based on well-studied techniques from the formal verification community. 
-*Specifications* define a set of rules that call into the contract under analysis and make various assertions about its behavior. 
-Together with the contract under analysis, these rules are compiled to a logical formula called a *verification condition*, which is then proved or disproved by an SMT solver. 
+***Specifications*** define a set of rules that call into the contract under analysis and make various assertions about its behavior. 
+Together with the contract under analysis, these rules are compiled to a logical formula called a ***verification condition***, which is then proved or disproved by an SMT solver. 
 If the rule is disproved, the solver also provides a concrete test case demonstrating the violation.
 
 The rules of the specification play a crucial role in the analysis. Without adequate rules, only very basic properties can be checked (e.g., no assertions in the contract itself are violated). 
@@ -24,24 +24,25 @@ Thinking about the function `deposit`, a basic property is:
   #### _***P1 Correct deposit functionality***: The balance of the beneficiary is increased appropriately_  
 
 The rule in [integrityOfDeposit.spec](IntegrityOfDeposit.spec) verifies this property. 
-It verifies that the funds of `msg.sender` is the sum of his funds before and the amount passed.  
+It verifies that the funds of `msg.sender` are his funds before plus the amount deposited.  
 Formal verification can provide complete coverage of the input space, giving guarantees beyond what is possible from testing alone.
 First, all possible inputs to the deposit function are taken into account.
-Also, all possible calling context (msg.sender , timestamp, block number, ...) represented in the `env` structure. 
-Also, the initial state can contain any value for the current funds of the msg sender.
+All possible calling contexts (like msg.sender, timestamp, and block number) are represented in the `env` structure. 
+The initial state can contain any value for the current funds of the msg sender.
 
-To run the Certora Prover on this contract, run the following command line:
+To use the Certora Prover on this contract, run the following command line:
 
 ```sh
 certoraRun Bank.sol:Bank --verify Bank:IntegrityOfDeposit.spec
 ```
 
-This is a basic run on one contract, verifying all rules in the specification file. 
+This command is a basic verification of one contract, checking all rules in the specification file. 
 Later on, we will see options to analyze a system containing many solidity files. 
-
-Local solidity files are compiled, specification file is check for syntax error,  all is compressed and sent to Certora’s web server.
-Various information is printed to the console and an email is sent when the process is finished.
-At the end, the output will look similar to this:
+Local solidity files are compiled, and the specification file is checked for syntax errors. 
+Then they are compressed and sent to Certora’s web server.
+The prover will print various information to the console. 
+An email will be sent when the process is finished.
+In the end, the output will look similar to this:
 ```
 . . . 
 Status page: https://vaas-stg.certora.com/jobStatus/23658/e145eb5d7d5f2dea1f72?anonymousKey=f49a8d71d3d17288d8405c015
@@ -52,23 +53,24 @@ Prover found violations:
 ```
 Follow the Verification results link to see the results.
 
-Certora Prover help understanding violation of properties. 
-First you see a table with the verification results. ![results](images/results.jpg) 
+Certora Prover helps in understanding violations of properties. 
+You see a table with the verification results. ![results](images/results.jpg) 
 
 
-For each rule, it either displays a thumbs-up when it formally proved or a thumbs-down when it is violated.
+For each rule, it either displays a thumbs-up when it is formally proved or a thumbs-down when it is violated.
 
-Click the rule name to see a counter example violating the rule.
+Click the rule name to see a counter-example violating the rule.
 
 ![counter example](images/callTraceAndVariables.jpg) 
 
-The counter example shows values of the parameters to the rule, a call trace and the variables in the rule.
-Drill down into the call trace, to see which functions were called.
+The counter-example shows values of the rule's parameters and variables and a call trace.
+Drill down into the call trace to see which functions were called.
 Notice the values of variables.  
-So, what’s the bug?  
 The amount deposited in `deposit(e, amount);` is MAX_UNIT,   
 the `uint256 fundsBefore = getFunds(e, e.msg.sender)` is 1 and   
-the ` fundsAfter = getFunds(e, e.msg.sender)` is zero.  
+the ` fundsAfter = getFunds(e, e.msg.sender)` is zero. 
+So, what's the bug?  
+**The rule does not hold when an overflow occurs.**
 
 
 Lets “fix” the overflow bug in the code and rerun:
