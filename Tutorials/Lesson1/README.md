@@ -24,11 +24,16 @@ Thinking about the function `deposit`, a basic property is:
   #### _***P1: Correct deposit functionality***: The balance of the beneficiary is increased appropriately_  
 
 The rule in [integrityOfDeposit.spec](IntegrityOfDeposit.spec) verifies this property. 
-It verifies that the funds of `msg.sender` are his funds before plus the amount deposited.  
+It verifies that the `deposit` operation increases the funds of `msg.sender` by the deposited amount.  
 Formal verification can provide complete coverage of the input space, giving guarantees beyond what is possible from testing alone.
-First, all possible inputs to the deposit function are taken into account.
-All possible calling contexts (like msg.sender, timestamp, and block number) are represented in the `env` structure. 
-The initial state can contain any value for the current funds of the msg sender.
+This means that all possible inputs to the deposit function (all possible deposited amounts) are taken into account. 
+Additionally, all possible calling contexts are taken into account. Certora prover represents the calling context through the struct variable `env`. Declaring a single `env` variable suffices to capture all aspects of the calling contexts, but they can also be addressed individually.
+Some example aspects of the calling context are:
+ - "who is the depositor?" (`env.msg.sender`)
+ - "what was the initial balance of the depositor?" (`env.msg.sender.balance`)
+ - "in which block does the deposit occur?" (`env.block.number`)
+ - "at which time does the deposit occur?" (`env.block.timestamp`)
+ - (and many more)
 
 To use the Certora Prover on this contract, run the following command line:
 
@@ -36,10 +41,11 @@ To use the Certora Prover on this contract, run the following command line:
 certoraRun Bank.sol:Bank --verify Bank:IntegrityOfDeposit.spec
 ```
 
-This command is a basic verification of one contract, checking all rules in the specification file. 
-Later on, we will see options to analyze a system containing many solidity files. 
-Local solidity files are compiled, and the specification file is checked for syntax errors. 
-Then they are compressed and sent to Certora’s web server.
+This command triggers a verification run on the contract `Bank` in the solidity file `Bank.sol`, checking all rules in the specification file. 
+Later on, we will see options to analyze a system containing many solidity files.
+The command proceeds in two steps.
+First, the solidity files are compiled, and the specification file is checked for syntax errors. This step happens on the local machine for fast feedback. 
+Next, all necessary files are compressed and sent to Certora’s web server for verification (verification tasks can be very heavy, so running them in the cloud can help with scalability).
 The prover will print various information to the console. 
 An email will be sent when the process is finished.
 In the end, the output will look similar to this:
@@ -51,9 +57,9 @@ Prover found violations:
 [rule] callTraceProblem
 [rule] integrityOfDeposit
 ```
-Follow the Verification results link to see the results.
-You see a table with the verification results. ![results](images/results.jpg) 
-For each rule, it either displays a thumbs-up when it is formally proved or a thumbs-down when it is violated.
+Follow the "Verification results" link to see the results.
+You see a table with the verification results, similar to this image. ![results](images/results.jpg) 
+For each rule, the table either displays a thumbs-up when the rule is was proved or a thumbs-down when a violation of the rule was discovered.
 
 ## Understanding Rule Violations
 
@@ -64,7 +70,7 @@ Click the rule name to see a counter-example violating the rule.
 ![counter example](images/callTraceAndVariables.jpg) 
 
 The counter-example shows values of the rule's parameters and variables and a call trace.
-Drill down into the call trace to see which functions were called.
+You can investigate the call trace to see which functions were called.
 Notice the values of variables: 
 * The amount deposited in `deposit(e, amount);` is MAX_UNIT.
 * The `uint256 fundsBefore = getFunds(e, e.msg.sender)` is one.
@@ -83,7 +89,7 @@ No violations were found. Great!
 
 ## Preconditions and Helper Variables
 
-Let’s define [another property](Sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
+Let’s define [another property](Sanity.spec) and verify that after deposit the totalFunds in the system is at least the funds of the msg.sender:  
   
  #### _***P2: Sanity of deposit***: total funds >= funds of a single user_
   
