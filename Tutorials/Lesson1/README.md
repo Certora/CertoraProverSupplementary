@@ -97,10 +97,10 @@ certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --settings -rule=tot
 Notice the useful option of `-rule` to run one rule at a time.
 
 A violation is found. 
-Do you understand why?
+Do you understand why?  
 Adding additional variables to the rule can help understand the counter-example. 
-
 Try adding the ***helper variables*** `userFundsBefore` and `totalBefore`.
+
 As we discussed, the tool assumes all possible input states as a starting state. 
 The rule is violated when the initial state's totalFunds is less than the current funds of msg.sender. 
 By adding ***preconditions***, you can eliminate infeasible states and put constraints on values. 
@@ -111,7 +111,6 @@ The prover will now assume that in the initial state before calling deposit, the
 ```sh
 certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --msg “running with precondition”
 ```
-Use the `--msg` flag to add a message description to your run. You will see the message in the mail and help you recognize one run form the rest.
 
 Use the `--msg` flag to add a message description to your run. 
 It can help you recognize a specific run.
