@@ -115,7 +115,7 @@ Rule `totalFundsAfterDepositWithPrecondition` has the constraint
 
 The prover will now assume that in the initial state before calling deposit, the total funds are at least the user funds.
 ```sh
-certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --msg “running with precondition”
+certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --msg "running with precondition"
 ```
 
 Use the `--msg` flag to add a message description to your run. 
