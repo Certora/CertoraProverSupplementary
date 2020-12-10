@@ -38,7 +38,7 @@ Some example aspects of the calling context are:
 Notice that each function must get an `env` variable as its first parameter:
 `deposit(e, amount);`.
 
-By default, the Certora prover will ignore all states where any function call reverts, and they will not be considered violations of the rule.
+By default, the Certora prover will ignore all paths where any function call reverts, and they will not be considered violations of the rule.
 We will learn more about this topic in the next lesson.
 
 To use the Certora Prover on this contract, run the following command line:
@@ -142,6 +142,8 @@ The most common usage is to simulate any function on any arguments, as we show n
 calldataarg arg; // any argument
 sinvoke f(e, arg); //simulate only non reverting paths
 ```
+Different functions in the contract might have a different number or types of parameters. Using a `calldataarg` variable solves this problem and ensures each simulated function gets valid input parameters.
+
 Run the parametric rule from [parametric.spec](Parametric.spec)
 ```sh
 certoraRun BankFixed.sol:Bank --verify Bank:Parametric.spec
