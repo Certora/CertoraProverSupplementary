@@ -34,6 +34,12 @@ Some example aspects of the calling context are:
  - "In which block does the deposit occur?" (`env.block.number`)
  - "At which time does the deposit occur?" (`env.block.timestamp`)
  - (and many more)
+ 
+Notice that each function must get an `env` variable as its first parameter:
+`deposit(e, amount);`.
+
+By default, the Certora prover will ignore all states where any function call reverts, and they will not be considered violations of the rule.
+We will learn more about this topic in the next lesson.
 
 To use the Certora Prover on this contract, run the following command line:
 
