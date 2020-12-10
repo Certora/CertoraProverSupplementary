@@ -8,14 +8,14 @@ Together with the contract under analysis, these rules are compiled to a logical
 If the rule is disproved, the solver also provides a concrete test case demonstrating the violation.
 
 The rules of the specification play a crucial role in the analysis. Without adequate rules, only very basic properties can be checked (e.g., no assertions in the contract itself are violated). 
-To effectively Certora Prover, users must write rules that describe the high-level properties they wish to verify on their contracts. 
+To effectively use Certora Prover, users must write rules that describe the high-level properties they wish to verify on their contracts. 
 Here we will learn how to think about and write high-level properties.
 
 
 ## Example
 
 Let's take as an example a straightforward simple bank implementation ([Bank.sol](Bank.sol)).
-The contract has a mapping from users to their funds, and the total funds deposited in the system. The basic operations are `deposit` `transfer` and `withdraw`.
+The contract has a mapping from users to their funds and the total funds deposited in the system. The primary operations are `deposit`, `transfer`, and `withdraw`.
 
 ## A Basic Rule
 
@@ -26,13 +26,13 @@ Thinking about the function `deposit`, a basic property is:
 The rule in [integrityOfDeposit.spec](IntegrityOfDeposit.spec) verifies this property. 
 It verifies that the `deposit` operation increases the funds of `msg.sender` by the deposited amount.  
 Formal verification can provide complete coverage of the input space, giving guarantees beyond what is possible from testing alone.
-This means that all possible inputs to the deposit function (all possible deposited amounts) are taken into account. 
-Additionally, all possible calling contexts are taken into account. Certora prover represents the calling context through the struct variable `env`. Declaring a single `env` variable suffices to capture all aspects of the calling contexts, but they can also be addressed individually.
+All possible inputs to the deposit function (all possible deposited amounts) are taken into account. 
+Additionally, all possible calling contexts are considered. Certora prover represents the calling context through the struct variable `env`. Declaring a single `env` variable suffices to capture all aspects of the calling contexts, but they can also be addressed individually.
 Some example aspects of the calling context are:
- - "who is the depositor?" (`env.msg.sender`)
- - "what was the initial balance of the depositor?" (`env.msg.sender.balance`)
- - "in which block does the deposit occur?" (`env.block.number`)
- - "at which time does the deposit occur?" (`env.block.timestamp`)
+ - "Who is the depositor?" (`env.msg.sender`)
+ - "What was the initial balance of the depositor?" (`env.msg.sender.balance`)
+ - "In which block does the deposit occur?" (`env.block.number`)
+ - "At which time does the deposit occur?" (`env.block.timestamp`)
  - (and many more)
 
 To use the Certora Prover on this contract, run the following command line:
@@ -74,7 +74,7 @@ You can investigate the call trace to see which functions were called.
 Notice the values of variables: 
 * The amount deposited in `deposit(e, amount);` is MAX_UNIT.
 * The `uint256 fundsBefore = getFunds(e, e.msg.sender)` is one.
-* The ` fundsAfter = getFunds(e, e.msg.sender)` is zero. 
+* The `uint256 fundsAfter = getFunds(e, e.msg.sender)` is zero. 
 
 So, what's the bug?  
 **The rule does not hold when an overflow occurs.**
@@ -89,9 +89,9 @@ No violations were found. Great!
 
 ## Preconditions and Helper Variables
 
-Let’s define [another property](Sanity.spec) and verify that after deposit the totalFunds in the system is at least the funds of the msg.sender:  
+Let’s define [another property](Sanity.spec) and verify that after deposit, the totalFunds in the system is at least the funds of the msg.sender:  
   
- #### _***P2: Sanity of deposit***: total funds >= funds of a single user_
+ #### _***P2: Sanity of deposit***: total funds >= funds of the single user_
   
 
 
@@ -107,13 +107,13 @@ Do you understand why?
 Adding additional variables to the rule can help understand the counter-example. 
 Try adding the ***helper variables*** `userFundsBefore` and `totalBefore`.
 
-As we discussed, the tool assumes all possible input states as a starting state. 
+As we discussed, the tool assumes all possible input values as a starting state. 
 The rule is violated when the initial state's totalFunds is less than the current funds of msg.sender. 
 By adding ***preconditions***, you can eliminate infeasible states and put constraints on values. 
 Rule `totalFundsAfterDepositWithPrecondition` has the constraint 
 `require  getTotalFunds(e) >= getFunds(e, e.msg.sender);`.
 
-The prover will now assume that in the initial state before calling deposit, the total funds are at least the user funds.
+The prover will now assume that in the initial state before calling deposit, the total funds are at least the user's funds.
 ```sh
 certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --msg "running with precondition"
 ```
@@ -153,7 +153,7 @@ Run this rule on the original Bank version:
  	certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
 ```
 
-Notice that this rule uncover the bug detected by P1: integrity of deposit.
+Notice that this rule uncovers the bug detected by P1: integrity of deposit.
 
 Parametric rules enable expressing reusable and concise correctness conditions. 
 Note that they are not dependent on the implementation. 
