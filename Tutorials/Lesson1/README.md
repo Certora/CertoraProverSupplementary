@@ -139,7 +139,7 @@ you can define a method variable, `method f`, as a parameter to the rule or a lo
 The most common usage is to simulate any function on any arguments, as we show next.
 ```
 calldataarg arg; // any argument
-sinvoke f(e, arg); //simulate only non reverting paths
+f(e, arg);
 ```
 Different functions in the contract might have a different number or types of parameters. Using a `calldataarg` variable solves this problem and ensures each simulated function gets valid input parameters.
 
