@@ -30,7 +30,6 @@ All possible inputs to the deposit function (all possible deposited amounts) are
 Additionally, all possible calling contexts are considered. Certora prover represents the calling context through the struct variable `env`. Declaring a single `env` variable suffices to capture all aspects of the calling contexts, but they can also be addressed individually.
 Some example aspects of the calling context are:
  - "Who is the depositor?" (`env.msg.sender`)
- - "What was the initial balance of the depositor?" (`env.msg.sender.balance`)
  - "In which block does the deposit occur?" (`env.block.number`)
  - "At which time does the deposit occur?" (`env.block.timestamp`)
  - (and many more)
