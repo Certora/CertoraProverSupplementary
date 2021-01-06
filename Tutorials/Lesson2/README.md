@@ -44,7 +44,7 @@ Let's define a  property of the bank state that should always hold:
 
 
 `
-funds[account] > 0 <==> active[account]    
+funds[account] > 0 ==> active[account]    
 `
 
 
@@ -53,8 +53,6 @@ This expression is an *invariant* -  a condition that should always holds, on al
 Certora Prover verifies invariants similar to mathematical induction. First, the invariant is checked on the initial state of the contract.  
 Next, each method is checked by assuming that the invariant holds before, calling the method, and verifying that the invariant holds on the resulting state.  
 
-
-## Harness
 
 *** continue here ***
 
@@ -65,12 +63,28 @@ Syntax:
 invariant invariantName(args_list) exp - 
 
 Assume exp holds before execution of any method and verify exp must hold afterwards. 
-The invariant above is equivalent to a rule:
+The invariant above is almost equivalent to a rule:
+```
 	method f;
 	require exp;
 	calldataarg arg; 
 	sinvoke f(e,arg);
 	assert exp;
+```
+
+Lets see an example, where it is not equivelent to this rule
+
+BankWithInactive
+
+invaraint and rule
+
+rule pases invariant fail
+
+why?
+
+initial state is important, you can not count on an invaraint that does not hold in the initial state. Same bug as in last contract still exsist.
+
+Try to have the strongest invaraint checked. double implication  
 
 
 
