@@ -65,6 +65,6 @@ contract Borda {
     address private myFavorite;
 
     function fraud() public {
-        _points[myFavorite] == _points[myFavorite] + 100000;
+        _points[myFavorite] = _points[myFavorite] + 100000;
     }
 }
