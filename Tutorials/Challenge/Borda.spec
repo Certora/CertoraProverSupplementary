@@ -4,8 +4,11 @@ methods {
 	points(address) returns uint256  envfree
  	voted(address) returns bool  envfree
 	winner() returns address envfree
-	pointsOfWinner() returns uint256 envfree
+	vote(address,address,address)
 }
+
+definition MAXINT() returns uint256 =
+	0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
 
 /*
 After voting, a user is marked as voted
@@ -15,20 +18,20 @@ After voting, a user is marked as voted
 		env e;
 		require(x==e.msg.sender);
 		vote(e,f,s,t);
-		assert (voted(x));
+		assert voted(x), "expecting voted to be true after voting";
 	}
 
 /*
 Single vote per user
 	A user can not vote if he has voted before
- 	voted(x)  ㄱvote(x,f,s,t)
+ 	voted(x) => ㄱvote(x,f,s,t)
 */
 	rule singleVote(address x, address f, address s, address t) {
 		env e;
 		require(x==e.msg.sender);
 		bool before =  voted(x);
-		invoke  vote(e,f,s,t);
-		assert before => lastReverted;
+		vote@withrevert(e,f,s,t);
+		assert before => lastReverted, "expecting to deny voting for voted users";
 	}
 
 /*
@@ -38,7 +41,6 @@ Integrity of points:
 	vote(x,f,s,t)
 	{ points(f) = f_points+3 ⋀ points(s) = s_pointss+2 ⋀ t_points = points(t)+1 }
 */
-
 	rule integrityPoints(address x, address f, address s, address t) {
 		env e;
 		require(x==e.msg.sender);
@@ -46,9 +48,9 @@ Integrity of points:
 		uint256  s_points =  points(s);
 		uint256  t_points =  points(t);
 		vote(e,f,s,t);
-		assert (  points(f) == f_points +3 &&
-				 points(s) == s_points +2 &&
-				 points(t) == t_points +1 );
+		assert points(f) == f_points +3 &&
+			   points(s) == s_points +2 &&
+			   points(t) == t_points +1, "unexpected change to points";
 	}
 
 /*
@@ -61,42 +63,42 @@ Integrity of voted:
 		env eF;
 		calldataarg arg;
 		f(eF,arg);
-		assert ( voted(x));
+		assert voted(x), "once voting expecting to stay voted";
 	}
+
+/*
+ Integrity of winner
+	The winner has the most points
+	winner() = w  ∀address c. points(c) ≤  points(w)
+*/
+    invariant integrityPointsOfWinner(address c)
+                points(winner()) >= points(c)
 
 /*
 No effect on other candidates:
 	∀address c, c≠{f,s,t}.
-	{c_points = points(c)}  vote(x,f,s,t) {points(c) = c_points}
+	{c_points = points(c) ⋀ b = voted(c) }  vote(x,f,s,t) {points(c) = c_points ⋀ ( voted(c) = b  V  c = x }
 */
-
-	rule noEffect(address x, address first, address s, address t, method f) {
-		env e;
-		calldataarg arg;
+	rule noEffect(address x, method m) {
 		address c;
+		env e;
 		require(x==e.msg.sender);
-		require( c!=first &&  c!=s  && c!=t);
-		uint256  c_points =  points(c);
-		if (f.selector == vote(address,address,address).selector) {
-		    vote(e,first,s,t);
-		}
-		else {
-		    f(e,arg);
-		}
-		assert (  points(c) == c_points );
+		uint256  c_points = points(c);
+		bool c_voted = voted(c);
+		if (m.selector == vote(address, address, address).selector) {
+		    address f;
+		    address s;
+		    address t;
+    	    require( c!=f &&  c!=s  && c!=t);
+        	vote(e,f,s,t);
+        }
+    	else {
+    	    calldataarg args;
+    	    m(e,args);
+    	}
+		assert ( voted(c) == c_voted || c  == x ) &&
+		        points(c) == c_points, "unexpected change to others points or voted";
 	}
-
-    invariant integrityPointsOfWinner(address w)
-     	 winner() == w => (pointsOfWinner() == points(w) )
-
-
-    /*
-    Emptiness:
-        When no user has voted than all candidates have zero votes
-        (∀address x ㄱvoted(x)) => (∀address c  points(c)=0)
-    */
-    invariant  emptiness() (forall address x. !voted(x) ) => (forall address c.  points(c)==0)
-
 
 
  /*
@@ -116,23 +118,36 @@ Commutative of votes
 		vote(e2,f2,s2,t2);
 		uint256  c_points_P1 =  points(c);
 		bool y_voted_P1 =  voted(y);
-		address w1 =  winner();
+		uint256 winner_P1 =  points(winner());
 		vote(e2,f2,s2,t2) at init;
 		vote(e1,f1,s1,t1);
 		uint256  c_points_P2 =  points(c);
 		bool y_voted_P2 =  voted(y);
-		address w2 =  winner();
-		assert ( c_points_P1 == c_points_P2 &&  y_voted_P1 == y_voted_P2);
-		//assert (w1 == w2); //we can not demand this the order is important in case of a tie
-
+		uint256 winner_P2 =  points(winner());
+		assert c_points_P1 == c_points_P2 &&  y_voted_P1 == y_voted_P2 && winner_P1 == winner_P2, "vote is not commutative";
 	}
+
+
 /*
- Integrity of winner
-	The winner has the most points
-	winner() = w  ∀address c. points(c) ≤  points(w)
+Able to vote
+	If a user can vote he can do so after someone else operation
+ 	vote(x,f,s,t) ~ op;vote(x,f,s,t)
 */
-invariant integrityWinner(address w)
- 	sinvoke winner() == w => (forall address c. points(w) >=  points(c))
+	rule allowVote(address x, address o, address f, address s, address t, method m) {
+		env e;
+		require(x==e.msg.sender);
+		storage init = lastStorage;
+		vote(e,f,s,t);
+
+		require (o!=x && o==eOther.msg.sender);
+		calldataarg args;
+		env eOther;
+        m(eOther,args) at init;
+        require points(f) < MAXINT()-3 && points(s) < MAXINT()-2 && points(t) < MAXINT();
+        vote@withrevert(e,f,s,t);
+		assert !lastReverted, "expecting to allow voting for nonvoted users, unless maxint reached";
+	}
+
 
 /*
 Participation criterion
@@ -154,7 +169,6 @@ Participation criterion
 
 
 */
-
 	rule participationCriterion(address x, address f, address s, address t) {
 		env e;
 		require(x==e.msg.sender);
@@ -164,7 +178,8 @@ Participation criterion
         require points(w1) >=  points(t);
         vote(e,f,s,t);
 		address w2 =  winner();
-		assert( w1==f => w2==f);
+		assert w1==f => w2==f, "winner changed unexpectly";
 	}
+
 
 
