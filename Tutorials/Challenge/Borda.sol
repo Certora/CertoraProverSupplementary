@@ -1,17 +1,22 @@
 
 /* Do not change BordaInterface */
 interface BordaInterface {
+
     // current winner
     function winner() external view returns(address);
-    // msg.sender vote first chioce to f, second to s and third to t
+
+    // msg.sender votes first choice to f, second to s and third to t
     function vote(address f, address s, address t) external returns(bool);
-    // number of points
+
+    // number of points the candidate has received
     function points(address c) external view returns(uint256);
+
     // has user x voted?
     function voted(address x) external view returns(bool);
 }
 
-/* fell free to change implementation from here */
+/* Feel free to change any code below this point */
+
 library SafeMath {
     function safeAdd(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
@@ -29,26 +34,29 @@ library SafeMath {
 contract Borda is BordaInterface{
     using SafeMath for uint256;
 
-    // current winner
+    // The current winner
     address public _winner;
-    // a list of voters for ensuring once time voter. initialized all to zero
+
+    // A map storing whther an address has already voted. Initialized to false.
     mapping (address => bool)  _voted;
-    // points a candidate has recieved. initialized all to zero
+
+    // Points each candidate has recieved, initialized to zero.
     mapping (address => uint256) _points;
-    // current max points
+
+    // current max points of all candidates.
     uint256 public pointsOfWinner;
 
 
-    function vote(address f, address s, address t) public override returns(bool) {
-        require(!_voted[msg.sender],"already voted");
+    function vote(address f, address s, address t) public override returns (bool) {
+        require(!_voted[msg.sender], "this voter has already cast its vote");
         require( f != s && f != t && s != t, "candidates are not different");
         _voted[msg.sender] = true;
-        voteTo(f,3);
-        voteTo(s,2);
-        voteTo(t,1);
+        voteTo(f, 3);
+        voteTo(s, 2);
+        voteTo(t, 1);
     }
 
-    function  voteTo(address c, uint256 p) private {
+    function voteTo(address c, uint256 p) private {
         //update points
         _points[c] = _points[c].safeAdd(p);
         // update winner if needed
@@ -57,11 +65,11 @@ contract Borda is BordaInterface{
         }
     }
 
-    function winner() external view override  returns(address) {
+    function winner() external view override returns (address) {
         return _winner;
     }
 
-    function points(address c) public view override returns(uint256) {
+    function points(address c) public view override returns (uint256) {
         return _points[c];
     }
 
