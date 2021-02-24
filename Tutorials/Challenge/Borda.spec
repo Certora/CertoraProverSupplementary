@@ -13,24 +13,22 @@ definition MAXINT() returns uint256 =
 
 /*
 After voting, a user is marked as voted
-    vote(x, f, s, t) => voted(x)
+    vote(e, f, s, t) => voted(e.msg.sender)
 */
-rule integerityVote(address x, address f, address s, address t) {
+rule integerityVote(address f, address s, address t) {
 	env e;
-	require(x == e.msg.sender);
 	vote(e, f, s, t);
-	assert voted(x), "A user voted without being marked accordingly";
+	assert voted(e.msg.sender), "A user voted without being marked accordingly";
 }
 
 /*
 Single vote per user
 	A user can not vote if he has voted before
- 	voted(x) => ㄱvote(x, f, s, t)
+ 	voted(e.msg.sender) => ㄱvote(e, f, s, t)
 */
-rule singleVote(address x, address f, address s, address t) {
+rule singleVote(address f, address s, address t) {
 	env e;
-	require(x == e.msg.sender);
-	bool has_voted_before = voted(x);
+	bool has_voted_before = voted(e.msg.sender);
 	vote@withrevert(e, f, s, t);
 	assert has_voted_before => lastReverted, "Double voting is not allowed";
 }
@@ -41,12 +39,11 @@ Integrity of points:
 	This rule also verifies that there are three distinct candidates.
 
 	{ points(f) = f_points ⋀ points(s) = s_points ⋀ points(t) = t_points }
-	vote(x, f, s, t)
+	vote(e, f, s, t)
 	{ points(f) = f_points + 3 ⋀ points(s) = s_points + 2 ⋀ points(t) = t_points + 1 }
 */
-rule integrityPoints(address x, address f, address s, address t) {
+rule integrityPoints(address f, address s, address t) {
 	env e;
-	require(x == e.msg.sender);
 	uint256 f_points = points(f);
 	uint256 s_points = points(s);
 	uint256 t_points = points(t);
@@ -59,7 +56,7 @@ rule integrityPoints(address x, address f, address s, address t) {
 /*
 Integrity of voted:
 	Once a user cast her vote, she is marked as voted globally (for all future states)
-	vote(x, f, s, t)  Globally voted(x)
+	vote(e, f, s, t)  Globally voted(e.msg.sender)
 */
 rule golballyVoted(address x, method f) {
 	require voted(x);
@@ -83,24 +80,23 @@ A vote can only affect the voter and the selected candidates, and has no effect 
 	∀address c, c ≠ {f, s, t}.
 	{c_points = points(c) ⋀ b = voted(c) }  vote(x, f, s, t) {points(c) = c_points ⋀ ( voted(c) = b  V  c = x }
 */
-rule noEffect(address x, method m) {
+rule noEffect(method m) {
 	address c;
 	env e;
-	require(x == e.msg.sender);
 	uint256 c_points = points(c);
 	bool c_voted = voted(c);
 	if (m.selector == vote(address, address, address).selector) {
 		address f;
 		address s;
 		address t;
-		require( c != f &&  c != s  && c != t);
+		require( c != f  &&  c != s  &&  c != t );
 		vote(e, f, s, t);
 	}
 	else {
 		calldataarg args;
 		m(e, args);
 	}
-	assert ( voted(c) == c_voted || c  == x ) &&
+	assert ( voted(c) == c_voted || c  == e.msg.sender ) &&
 			 points(c) == c_points, "unexpected change to others points or voted";
 }
 
@@ -108,15 +104,13 @@ rule noEffect(address x, method m) {
 /*
 Commutativity of votes.
 	The order of votes is not important
-	vote(x, f, s, t) ; vote(x’, f’, s’, t’)  ～  vote(x’, f’, s’, t’) ; vote(x, f, s, t)
+	vote(e, f, s, t) ; vote(e’, f’, s’, t’)  ～  vote(e’, f’, s’, t’) ; vote(e, f, s, t)
 */
-rule voteCommutativity(address x1, address f1, address s1, address t1, address x2, address f2, address s2, address t2) {
+rule voteCommutativity(address f1, address s1, address t1, address f2, address s2, address t2) {
 	env e1;
 	env e2;
 	address c;
 	address y;
-	require(x1 == e1.msg.sender);
-	require(x2 == e2.msg.sender);
 	storage init = lastStorage;  // Both scenarios starts from the same initial state
 
 	// First 1 votes, then 2
@@ -142,17 +136,16 @@ rule voteCommutativity(address x1, address f1, address s1, address t1, address x
 /*
 Ability to vote
 	If a user can vote, no other user can prevent him to do so by any operation.
- 	vote(x, f, s, t) ~ op; vote(x, f, s, t)
+ 	vote(e, f, s, t) ~ op; vote(e, f, s, t)
 */
-rule allowVote(address x, address o, address f, address s, address t, method m) {
+rule allowVote(address f, address s, address t, method m) {
 	env e;
-	require(x == e.msg.sender);
 	storage init = lastStorage;
 	vote(e, f, s, t);  // Ensures the user can vote
 
-	calldataarg args;
 	env eOther;
-	require (o != x && o == eOther.msg.sender);
+	require (e.msg.sender != eOther.msg.sender);
+	calldataarg args;
 	m(eOther, args) at init;
 
 	require points(f) < MAXINT() - 3 && points(s) < MAXINT() - 2 && points(t) < MAXINT(); // No overflow
@@ -171,27 +164,26 @@ Participation criterion
 
 	!{ winner() != f} { !vote } { winner = f }
 	!exists state s
-	( !vote(x, f, s, t) on state s => winner() = f )
+	( !vote(e, f, s, t) on state s => winner() = f )
 	and
-	( vote(x, f, s, t) on state s => winner() != f )
+	( vote(e, f, s, t) on state s => winner() != f )
 
 
 	for every state s
-	!( !vote(x, f, s, t) => winner() = f )
+	!( !vote(e, f, s, t) => winner() = f )
 	or
-	!( vote(x, f, s, t) && winner() != f )
+	!( vote(e, f, s, t) && winner() != f )
 
 
 */
-rule participationCriterion(address x, address f, address s, address t) {
+rule participationCriterion(address f, address s, address t) {
 	env e;
-	require(x==e.msg.sender);
-	address w1 =  winner();
-	require points(w1) >=  points(f);
-	require points(w1) >=  points(s);
-	require points(w1) >=  points(t);
-	vote(e,f,s,t);
-	address w2 =  winner();
-	assert w1==f => w2==f, "winner changed unexpectly";
+	address w1 = winner();
+	require points(w1) >= points(f);
+	require points(w1) >= points(s);
+	require points(w1) >= points(t);
+	vote(e, f, s, t);
+	address w2 = winner();
+	assert w1 == f => w2 == f, "winner changed unexpectedly";
 }
 

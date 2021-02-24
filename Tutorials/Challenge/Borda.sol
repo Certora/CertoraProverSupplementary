@@ -1,3 +1,4 @@
+pragma solidity ^0.6.0;
 
 /* Do not change BordaInterface */
 interface BordaInterface {
@@ -6,7 +7,7 @@ interface BordaInterface {
     function winner() external view returns(address);
 
     // msg.sender votes first choice to f, second to s and third to t
-    function vote(address f, address s, address t) external returns(bool);
+    function vote(address f, address s, address t) external;
 
     // number of points the candidate has received
     function points(address c) external view returns(uint256);
@@ -47,7 +48,7 @@ contract Borda is BordaInterface{
     uint256 public pointsOfWinner;
 
 
-    function vote(address f, address s, address t) public override returns (bool) {
+    function vote(address f, address s, address t) public override {
         require(!_voted[msg.sender], "this voter has already cast its vote");
         require( f != s && f != t && s != t, "candidates are not different");
         _voted[msg.sender] = true;
@@ -76,5 +77,7 @@ contract Borda is BordaInterface{
     function voted(address x) public view override returns(bool) {
         return _voted[x];
     }
+
+    function init_state() public {}
 
 }
