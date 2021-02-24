@@ -78,7 +78,7 @@ invariant integrityPointsOfWinner(address c)
 Vote is the only state-changing function. 
 A vote can only affect the voter and the selected candidates, and has no effect on other addresses.
 	∀address c, c ≠ {f, s, t}.
-	{ c_points = points(c) ⋀ b = voted(c) }  vote(x, f, s, t)  { points(c) = c_points ⋀ ( voted(c) = b V c = x ) }
+	{ c_points = points(c) ⋀ b = voted(c) }  vote(e, f, s, t)  { points(c) = c_points ⋀ ( voted(c) = b V c = e.msg.sender ) }
 */
 rule noEffect(method m) {
 	address c;
