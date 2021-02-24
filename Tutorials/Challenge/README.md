@@ -16,8 +16,8 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 
 # Exercise Prerequisites
 
-   * Python3.5 and up, including pip
-   * Java 11 and later
+   * Python 3.5 and up
+   * Java 11 or later
    * A solidity compiler version 0.6.0 or later.
 
 # Running the Certora Prover
@@ -38,5 +38,5 @@ By opening the `verification report` link you should a summary of all violation.
 The challenge is to introduce a bug or a malicious code to the `Borda` contract that the automated Certora prover does not detect with the given the [specification file](Borda.spec). Note that you can not change `BordaInterface`. Feel free to change `Borda` as you like and even add additional methods. 
 
 Once you find a bug that the prover does not identify, define a property that will uncover this issue. 
-
+Feel free to reach us with your findings at [our website](https://www.certora.com).
  
