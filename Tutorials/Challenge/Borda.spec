@@ -120,7 +120,7 @@ rule voteCommutativity(address f1, address s1, address t1, address f2, address s
 	bool y_voted_P1 = voted(y);
 	uint256 winner_P1 = points(winner());
 
-	// First 2 votes, then one
+	// First 2 votes, then 1
 	vote(e2, f2, s2, t2) at init;
 	vote(e1, f1, s1, t1);
 	uint256 c_points_P2 = points(c);
