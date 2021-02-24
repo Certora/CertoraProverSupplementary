@@ -14,7 +14,18 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 [Borda.sol](Borda.sol) contains `BordaInterface` and a contract `Borda` implementing this interface.
 [Borda.spec](Borda.spec) contains rules to verify any given implementation this interface.
 
-Before running the Certora prover, set your Certora key via `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`. To command to run the Certora Prover on the Borda contract is given in [run.sh]. Add to it the path to your local solidity compiler with `--solc path/to/solc`.
+# Running the Certora Prover
+
+The prerequisites to running the Certora Prover are:
+    * Python3.5 and up, including pip
+    * Java 11 and later
+    * A solidity compiler version 0.6.0 or later.
+
+1. Install the Certora Prover Package: `pip3 install certora-cli`.
+2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
+3. The command to run the Certora Prover on the Borda contract is given in [run.sh]. Add to it the path to your local solidity compiler with `--solc path/to/solc`.
+
+# The challenge
 
 The challenge is to introduce a bug or a malicious code to the `Borda` contract that the automated Certora prover does not detect with the given specification file [Borda.spec]. Note that you can not change `BordaInterface`. Feel free to change `Borda` as you like and even add additional methods. 
 
