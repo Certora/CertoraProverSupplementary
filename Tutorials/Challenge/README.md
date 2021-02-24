@@ -26,7 +26,12 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
 3. Edit the [run script](run.sh) solidity compiler to point to your local binary Solidity file path.
 4. Go to the folder containing [run.sh](run.sh).
-5. Execute the script: `./run.sh`. You should see a ![success message](success_screenshot.PNG).
+5. Execute the script: `./run.sh`. 
+
+You should see a similar message to this one ![success message](success_screenshot.PNG)
+
+By opening the `verification report` link you should a summary of all violation. When no violation is found, the rule should be colored green.
+![green screen](green_verification_report.PNG)
 
 # The challenge
 
