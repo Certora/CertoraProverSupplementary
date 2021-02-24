@@ -14,12 +14,13 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 [Borda.sol](Borda.sol) contains `BordaInterface` and a contract `Borda` implementing this interface.
 [Borda.spec](Borda.spec) contains rules to verify any given implementation this interface.
 
-# Running the Certora Prover
+# Exercise Prerequisites
 
-The prerequisites to running the Certora Prover are:
    * Python3.5 and up, including pip
    * Java 11 and later
    * A solidity compiler version 0.6.0 or later.
+
+# Running the Certora Prover
 
 1. Install the Certora Prover Package: `pip3 install certora-cli`.
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
