@@ -1,1 +1,1 @@
-certoraRun Borda.sol --verify Borda:Borda.spec --staging
+certoraRun Borda.sol --verify Borda:Borda.spec
