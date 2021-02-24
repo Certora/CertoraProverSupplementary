@@ -128,7 +128,7 @@ rule voteCommutativity(address f1, address s1, address t1, address f2, address s
 	uint256 winner_P2 = points(winner());
 
 	// Assert commutativity
-	assert c_points_P1 == c_points_P2 &&  y_voted_P1 == y_voted_P2 && winner_P1 == winner_P2, 
+	assert c_points_P1 == c_points_P2  &&  y_voted_P1 == y_voted_P2  &&  winner_P1 == winner_P2, 
 		"vote() is not commutative";
 }
 
@@ -148,7 +148,7 @@ rule allowVote(address f, address s, address t, method m) {
 	calldataarg args;
 	m(eOther, args) at init;
 
-	require points(f) < MAXINT() - 3 && points(s) < MAXINT() - 2 && points(t) < MAXINT(); // No overflow
+	require points(f) < MAXINT() - 3  &&  points(s) < MAXINT() - 2  &&  points(t) < MAXINT(); // No overflow
 
 	vote@withrevert(e, f, s, t);
 
@@ -162,7 +162,7 @@ Participation criterion
 	https://en.wikipedia.org/wiki/Participation_criterion
 
 
-	!{ winner() != f} { !vote } { winner = f }
+	!{ winner() != f } { !vote } { winner = f }
 	!exists state s
 	( !vote(e, f, s, t) on state s => winner() = f )
 	and
