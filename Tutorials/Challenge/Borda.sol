@@ -1,4 +1,4 @@
-pragma solidity ^0.6.0;
+pragma solidity >= 0.6.0;
 
 /* Do not change BordaInterface */
 interface BordaInterface {
