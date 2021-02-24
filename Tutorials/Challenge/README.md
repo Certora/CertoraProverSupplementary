@@ -17,9 +17,9 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 # Running the Certora Prover
 
 The prerequisites to running the Certora Prover are:
-    * Python3.5 and up, including pip
-    * Java 11 and later
-    * A solidity compiler version 0.6.0 or later.
+   * Python3.5 and up, including pip
+   * Java 11 and later
+   * A solidity compiler version 0.6.0 or later.
 
 1. Install the Certora Prover Package: `pip3 install certora-cli`.
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
