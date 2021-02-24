@@ -23,7 +23,7 @@ The prerequisites to running the Certora Prover are:
 
 1. Install the Certora Prover Package: `pip3 install certora-cli`.
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
-3. The command to run the Certora Prover on the Borda contract is given in [run.sh]. Add to it the path to your local solidity compiler with `--solc path/to/solc`.
+3. The command to run the Certora Prover on the Borda contract is given in [run.sh](run.sh). Add to it the path to your local solidity compiler with `--solc path/to/solc`.
 
 # The challenge
 
