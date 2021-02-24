@@ -38,7 +38,7 @@ contract Borda is BordaInterface{
     // The current winner
     address public _winner;
 
-    // A map storing whther an address has already voted. Initialized to false.
+    // A map storing whether an address has already voted. Initialized to false.
     mapping (address => bool)  _voted;
 
     // Points each candidate has recieved, initialized to zero.
