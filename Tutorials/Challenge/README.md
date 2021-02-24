@@ -13,8 +13,8 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 
 [Borda.sol](Borda.sol) contains `BordaInterface` and a contract `Borda` implementing this interface.
 [Borda.spec](Borda.spec) contains rules to verify any given implementation this interface.
-   
-To command to run the Certora Prover on contract Borda is given in [run.sh]. Add the path to your local solidity compiler with `--solc path/to/solc`.
+
+Before running the Certora prover, set your Certora key via `export CERTORAKEY=bec208012f41712a89b69fff17b814dbdb001dc4`. To command to run the Certora Prover on the Borda contract is given in [run.sh]. Add to it the path to your local solidity compiler with `--solc path/to/solc`.
 
 The challenge is to introduce a bug or a malicious code to the `Borda` contract that the automated Certora prover does not detect with the given specification file [Borda.spec]. Note that you can not change `BordaInterface`. Feel free to change `Borda` as you like and even add additional methods. 
 
