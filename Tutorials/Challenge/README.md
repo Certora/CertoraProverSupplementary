@@ -25,7 +25,7 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 1. Install the Certora Prover Package: `pip3 install certora-cli`.
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
 3. Edit the [run script](run.sh) solidity compiler to point to your local binary Solidity file path.
-4. Go to the folder containing [run.sh](run.sh).
+4. Edit [run.sh](run.sh) to include the correct path to the solidity compiler after `--solc`.
 5. Execute the script: `./run.sh`. 
 
 You should see a similar message to this one ![success message](success_screenshot.PNG)
