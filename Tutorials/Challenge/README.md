@@ -38,5 +38,5 @@ By opening the `verification report` link you should see a summary of all violat
 The challenge is to introduce a bug or a malicious code to the `Borda` contract that the automated Certora prover does not detect with the given the [specification file](Borda.spec). Note that you can not change `BordaInterface`. Feel free to change `Borda` as you like and even add additional methods. 
 
 Once you find a bug that the prover does not identify, define a property that will uncover this issue. 
-Feel free to reach us with your findings at [our website](https://www.certora.com).
+Feel free to reach us with your findings at [our Discord channel](https://discord.gg/r8vCMa7ReB).
  
