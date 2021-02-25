@@ -26,11 +26,11 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
 4. Edit [run.sh](run.sh) to include the correct path to the solidity compiler after `--solc`.
 5. Go to the Challenge folder containing `run.sh`.
-6. Execute the script: `./run.sh`. Windows users are recommended to use a Git bash /PowerShell or other alternative to windows command prompt 
+6. Execute the script: `./run.sh`. Windows users are recommended to use a [git-bash](https://gitforwindows.org/)/PowerShell or other alternative to windows command prompt 
 
 You should see a similar message to this one ![success message](success_screenshot.PNG)
 
-By opening the `verification report` link you should see a summary of all violation. When no violation is found, the rule should be colored green.
+By opening the `verification report` link you should see a summary of all violation. When no violations are found, the rule should be colored green.
 ![green screen](green_verification_report.PNG)
 
 # The challenge
