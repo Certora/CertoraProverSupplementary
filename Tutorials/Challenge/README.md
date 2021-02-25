@@ -24,14 +24,13 @@ We define `BordaInterface`, a public interface for the Borda algorithm:
 
 1. Install the Certora Prover Package: `pip3 install certora-cli`.
 2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
-3. Edit the [run script](run.sh) solidity compiler to point to your local binary Solidity file path.
 4. Edit [run.sh](run.sh) to include the correct path to the solidity compiler after `--solc`.
 5. Go to the Challenge folder containing `run.sh`.
-6. Execute the script: `./run.sh`.
+6. Execute the script: `./run.sh`. Windows users are recommended to use a Git bash /PowerShell or other alternative to windows command prompt 
 
 You should see a similar message to this one ![success message](success_screenshot.PNG)
 
-By opening the `verification report` link you should a summary of all violation. When no violation is found, the rule should be colored green.
+By opening the `verification report` link you should see a summary of all violation. When no violation is found, the rule should be colored green.
 ![green screen](green_verification_report.PNG)
 
 # The challenge

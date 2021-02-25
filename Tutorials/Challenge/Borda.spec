@@ -146,7 +146,7 @@ rule allowVote(address f, address s, address t, method m) {
 	env eOther;
 	require (e.msg.sender != eOther.msg.sender);
 	calldataarg args;
-	m(eOther, args) at init;
+	m(eOther, args) at init; //go back to the initial state
 
 	require points(f) < MAXINT() - 3  &&  points(s) < MAXINT() - 2  &&  points(t) < MAXINT(); // No overflow
 
@@ -161,20 +161,9 @@ Participation criterion
 	Abstaining from an election can not help a voter's preferred choice
 	https://en.wikipedia.org/wiki/Participation_criterion
 
-
-	!{ winner() != f } { !vote } { winner = f }
-	!exists state s
-	( !vote(e, f, s, t) on state s => winner() = f )
-	and
-	( vote(e, f, s, t) on state s => winner() != f )
-
-
-	for every state s
-	!( !vote(e, f, s, t) => winner() = f )
-	or
-	!( vote(e, f, s, t) && winner() != f )
-
-
+	{ w1 = winner() }
+	    ( vote(e, f, s, t) )
+	{ winner() = f => (w1 = f) }
 */
 rule participationCriterion(address f, address s, address t) {
 	env e;
