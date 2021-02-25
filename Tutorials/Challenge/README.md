@@ -1,30 +1,43 @@
 # Certora Prover Supplementary Material
-Given the [Borda count election algorithm](https://en.wikipedia.org/wiki/Borda_count), 
-a simple election scheme where voters rank candidates in order of preference by giving 3 points to their first choice, 
-2 for their 2nd choice and 1 point for the 3rd choice. 
+The [Borda count election algorithm](https://en.wikipedia.org/wiki/Borda_count) is a simple election scheme where voters rank candidates in order of preference by giving 3 points to their first choice, 2 for their 2nd choice, and 1 point for the 3rd choice. 
 
-We define `BordaInterface` a general interface for the Borda algorithm: 
-   * `winner() : address`  
-   Returns the current winner
-   * `points(address c) : uint256`  
-    number of points candidate c has
+We define `BordaInterface`, a public interface for the Borda algorithm: 
+   * `winner(): address`  
+   Returns the current winner - the address that has the most points. If there is more than one winner, one of them will be returned. If no votes were cast yet, it returns the zero address.
+   * `points(address c): uint256`  
+   Returns the number of points candidate c has received.
    * `voted(address x): bool`  
-    has user x voted?  
+   Returns true if user x voted and false otherwise.  
    * `vote(address f, address s, address t)`  
-    msg.sender votes with first choice to f, second to s and third to t
+   msg.sender votes with f as the first choice, s as the second, and t as the third. The three addresses must be different. msg.sender can vote to itself.
 
 [Borda.sol](Borda.sol) contains `BordaInterface` and a contract `Borda` implementing this interface.
 [Borda.spec](Borda.spec) contains rules to verify any given implementation this interface.
-   
-To command to run the Certora Prover on contract Borda is:
-```sh
-certoraRun Borda.sol --verify Borda:Borda.spec
-```
 
-The challenge here is to introduce a bug or malicious code to the solidity code that is not detected by the rules. 
-Note that you can not change the interface but beside that fell free to change the implementation 
-add even add additional methods. 
+# Exercise Prerequisites
 
-Once you find a bug that is not detected by the spec, define the property that will uncover this issue. 
+   * Python 3.5 and up
+   * Java 11 or later
+   * A solidity compiler version 0.6.0 or later.
 
+# Running the Certora Prover
+
+1. Install the Certora Prover Package: `pip3 install certora-cli`.
+2. Set your Certora key: `export CERTORAKEY=795ebbac71ae5fd6a19e7a214a524b064e33ff05`.
+3. Edit the [run script](run.sh) solidity compiler to point to your local binary Solidity file path.
+4. Edit [run.sh](run.sh) to include the correct path to the solidity compiler after `--solc`.
+5. Go to the Challenge folder containing `run.sh`.
+6. Execute the script: `./run.sh`.
+
+You should see a similar message to this one ![success message](success_screenshot.PNG)
+
+By opening the `verification report` link you should a summary of all violation. When no violation is found, the rule should be colored green.
+![green screen](green_verification_report.PNG)
+
+# The challenge
+
+The challenge is to introduce a bug or a malicious code to the `Borda` contract that the automated Certora prover does not detect with the given the [specification file](Borda.spec). Note that you can not change `BordaInterface`. Feel free to change `Borda` as you like and even add additional methods. 
+
+Once you find a bug that the prover does not identify, define a property that will uncover this issue. 
+Feel free to reach us with your findings at [our website](https://www.certora.com).
  
