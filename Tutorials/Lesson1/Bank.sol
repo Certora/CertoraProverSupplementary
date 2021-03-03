@@ -1,3 +1,5 @@
+pragma solidity < 0.8.0;
+
 contract Bank {
     mapping (address => uint256) private funds;
 	uint256  totalFunds;

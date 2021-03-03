@@ -43,7 +43,7 @@ We will learn more about this topic in the next lesson.
 To use the Certora Prover on this contract, run the following command line:
 
 ```sh
-certoraRun Bank.sol:Bank --verify Bank:IntegrityOfDeposit.spec
+certoraRun Bank.sol --verify Bank:IntegrityOfDeposit.spec
 ```
 
 This command triggers a verification run on the contract `Bank` in the solidity file `Bank.sol`, checking all rules in the specification file. 
@@ -157,7 +157,7 @@ One can transfer funds to himself to gain more assets.
 
 Run this rule on the original Bank version: 
 ```sh
- 	certoraRun Bank.sol:Bank --verify Bank:Parametric.spec
+certoraRun Bank.sol --verify Bank:Parametric.spec
 ```
 
 Notice that this rule uncovers the bug detected by P1: integrity of deposit.
