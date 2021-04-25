@@ -14,6 +14,6 @@ contract BallGame {
 			ballAt = 3;
 	}
 
-	
-	function init_stae() public { }	
+
+	//function init_stae() public { }	
 }

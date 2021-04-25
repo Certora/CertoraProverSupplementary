@@ -13,7 +13,10 @@ rule uniqueManager(uint256 fundId1, uint256 fundId2, method f ) {
 	require fundId1 != fundId2;
 	// assume different managers
 	require getCurrentManager(fundId1) != getCurrentManager(fundId2) ;
-				
+	
+	// hint: add additional variables just to look at the current state
+	bool active1 = isActiveManager(getCurrentManager(fundId1));			
+	
 	env e;
 	calldataarg args;
 	f(e,args);
