@@ -17,12 +17,13 @@ contract SimpleEnumerableMap {
 		if (!exists(key)) {
 			map[key] = value;
 			keys.push(key);
-		} // still buggy: maybe expecting to update if not inserting?
+		} else {
+			map[key] = value;
+		}
 	}
 
 	function remove(address key) external {
 		require (map[key] != address(0), "Key does not exist");
-		// buggy: what happens if we remove a key that does not exist?
 		map[key] = address(0);
 		uint i = indexOf(key);
 		if (i < keys.length - 1) {
@@ -32,6 +33,9 @@ contract SimpleEnumerableMap {
 	}
 
 	function exists(address key) internal view returns (bool) {
+		if (map[key] == address(0)) {
+			return false;
+		}
 		for (uint i = 0 ; i < keys.length ; i++) {
 			if (keys[i] == key) {
 				return true;

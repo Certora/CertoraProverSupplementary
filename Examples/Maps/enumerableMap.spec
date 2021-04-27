@@ -4,17 +4,17 @@ methods {
 }
 
 // consts and simple macro definitions
-definition MAX_UINT256() returns uint256 = 2^256 - 1;
-definition MAX_UINT160() returns uint256 = 2^160 - 1;
+//definition MAX_UINT256() returns uint256 = 2^256 - 1;
+//definition MAX_UINT160() returns uint256 = 2^160 - 1;
 
-definition IS_ADDRESS(address x) returns bool = 0 <= x && x <= MAX_UINT160();
+definition IS_ADDRESS(address x) returns bool = 0 <= x && x <= MAX_UINT160;
 
 // ghost to expose the internal ordering
 ghost list(uint) returns address;
 ghost listLen() returns uint {
     // it's ok to assume the list length won't reach MAX_UINT256 - but we may want to check that it's not possible to directly override length
-    init_state axiom 0 <= listLen() && listLen() < MAX_UINT256();
-    axiom listLen() < MAX_UINT256();
+    init_state axiom 0 <= listLen() && listLen() < MAX_UINT256;
+    axiom listLen() < MAX_UINT256;
 }
 
 // hooks
@@ -70,7 +70,44 @@ rule boundedLengthUpdate(method f) {
 }
 
 rule checkInsert(address key, address value) {
+    // a requireInvariant should be needed
     env e;
     insert(e, key, value);
     assert get(key) == value;
 }
+
+rule insertRevertConditions(address key, address value) {
+    env e;
+    insert(e, key, value);
+    bool succeeded = !lastReverted;
+
+    assert (e.msg.value == 0 
+        && value != 0)
+        => succeeded;
+}
+
+rule inverses(address key, address value) {
+    env e;
+    insert(e, key, value);
+    env e2;
+    remove(e2, key);
+    assert get(key) != value;
+}
+
+rule noChangeOther(address other, method f) {
+    address pre = get(other);
+
+    env e;
+    if (f.selector == insert(address,address).selector) {
+        address key;
+        address value;
+        require key != other;
+        insert(e,key,value);
+    } else {
+        calldataarg arg;
+        f(e, arg);
+    }
+    address post = get(other);
+    assert pre == post;
+}
+
