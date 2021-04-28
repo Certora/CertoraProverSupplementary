@@ -3,18 +3,14 @@ methods {
     get(address) returns address envfree
 }
 
-// consts and simple macro definitions
-//definition MAX_UINT256() returns uint256 = 2^256 - 1;
-//definition MAX_UINT160() returns uint256 = 2^160 - 1;
-
-definition IS_ADDRESS(address x) returns bool = 0 <= x && x <= MAX_UINT160;
+definition IS_ADDRESS(address x) returns bool = 0 <= x && x <= max_uint160;
 
 // ghost to expose the internal ordering
 ghost list(uint) returns address;
 ghost listLen() returns uint {
-    // it's ok to assume the list length won't reach MAX_UINT256 - but we may want to check that it's not possible to directly override length
-    init_state axiom 0 <= listLen() && listLen() < MAX_UINT256;
-    axiom listLen() < MAX_UINT256;
+    // it's ok to assume the list length won't reach max_uint - but we may want to check that it's not possible to directly override length
+    init_state axiom 0 <= listLen() && listLen() < max_uint;
+    axiom listLen() < max_uint;
 }
 
 // hooks
@@ -59,9 +55,15 @@ invariant listIsSet(address a) forall uint i. isListed(a, i) => (forall uint j. 
     preserved {
         requireInvariant lengthLemma();
     }
+
+    preserved insert(address k, address _) with (env e) {
+        requireInvariant mapIffInList(k);
+        requireInvariant lengthLemma();
+    }
 }
 
 rule boundedLengthUpdate(method f) {
+    requireInvariant lengthLemma();
     uint origLen = numOfKeys();
     env e; calldataarg arg;
     f(e, arg);
@@ -102,7 +104,11 @@ rule noChangeOther(address other, method f) {
         address key;
         address value;
         require key != other;
-        insert(e,key,value);
+        insert(e, key, value);
+    } else if (f.selector == remove(address).selector) {
+        address key;
+        require key != other;
+        remove(e, key);
     } else {
         calldataarg arg;
         f(e, arg);
