@@ -1,0 +1,1 @@
+certoraRun SimpleMap.sol --verify SimpleMap:simpleMap.spec
