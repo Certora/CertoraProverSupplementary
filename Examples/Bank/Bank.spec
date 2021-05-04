@@ -1,14 +1,9 @@
  pragma specify 0.1
 methods {
-	init_state()
 	getFunds(address) returns uint256 envfree
 	getTotalFunds() returns uint256 envfree
 	getEthBalance(address) returns uint256 envfree
 }
-
-/* The zero address must not hold funds. */
-invariant address_zero_cannot_become_an_account(env e, address z) 
-	z == 0 => sinvoke getFunds(z) == 0
 
 /* Invoke the withdraw method and assume that it does not revert.
    Then make sure that withdraw returns `success == true`.
@@ -18,21 +13,10 @@ rule withdraw_succeeds {
 	   call (msg.*, tx.*, block.* variables in solidity 
 	 */
 	env e; 
+	// Invoke function withdraw and assume it does not revert
 	/* For non-envfree methods, the environment is passed as the first argument*/
-	bool success = sinvoke withdraw(e);
+	bool success = withdraw(e);
 	assert success, "withdraw must succeed";
-}
-
-/* Invoke the transfer method where caller is `e.msg.sender`.
-   Check that the invoke reverts if caller does not have enough funds.
- */
-rule transfer_reverts(address to, uint256 amount) {
-	env e;
-	// Get the caller's balance before the invocation of transfer
-	// Note: getters which are envfree are usually called with `sinvoke`
-	uint256 balance = sinvoke getFunds(e.msg.sender);
-	invoke transfer(e,to,amount);
-	assert balance < amount => lastReverted , "not enough funds";
 }
 
 /* This rule checks that actions executed by a certain actor
@@ -40,21 +24,40 @@ rule transfer_reverts(address to, uint256 amount) {
    Here, an action invoked by `e.msg.sender` can only increase the 
    balance of another address `other`.
  */
-rule others_can_only_increase(address other, method f) {
-	env e;
-	
+rule others_can_only_increase_my_balance() {
+	method f; // an arbitrary function in the contract
+	env e;  // the execution environment
+
+	address other;
 	// Assume the actor and the other address are distinct
 	require e.msg.sender != other;
+
 	// Get the balance of `other` before the invocation
-	uint256 _balance = sinvoke getFunds(other);
+	uint256 _balance = getFunds(other);
 	
 	calldataarg arg; // any argument
-	sinvoke f(e,arg); // successful (potentially state-changing!)
+	f(e, arg); // successful (potentially state-changing!)
 	
 	// Get the balance of `other` after the invocation
-	uint256 balance_ = sinvoke getFunds(other);
+	uint256 balance_ = getFunds(other);
 	
 	assert _balance <= balance_, "Reduced the balance of another address";
+}
+
+/* The zero address must not hold funds. */
+invariant address_zero_cannot_become_an_account() 
+	getFunds(0) == 0
+
+
+/* Invoke the transfer method where caller is `e.msg.sender`.
+   Check that the invoke reverts if caller does not have enough funds.
+ */
+rule transfer_reverts(address to, uint256 amount) {
+	env e;
+	// Get the caller's balance before the invocation of transfer
+	uint256 balance = getFunds(e.msg.sender);
+	invoke transfer(e,to,amount);
+	assert balance < amount => lastReverted , "not enough funds";
 }
 
 /* The rule checks that after a successful deposit by an account, 
@@ -75,7 +78,7 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
 	env _e;
 	require _e.msg.sender == account &&
 			amount > 0;
-	sinvoke deposit(_e,amount);
+	deposit(_e,amount);
 	
 	// any other transaction beside withdraw by account, or transfer by the account
 	env eF;
@@ -83,7 +86,7 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
 			(eF.msg.sender == account => 
 				f.selector != transfer(address,uint256).selector);
 	calldataarg arg; // any argument
-	sinvoke f(eF,arg); // successful (potentially state-changing!)
+	f(eF,arg); // successful (potentially state-changing!)
    
 	//account withdraws
 	env e_;
@@ -93,10 +96,10 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
 			eF.block.timestamp >= _e.block.timestamp && 
 			eF.block.number >= _e.block.number; 
 	require e_.msg.sender == account; // same account that deposited
-	sinvoke withdraw(e_);
+	withdraw(e_);
 	
 	// check the Ether balance 
-	uint256 ethBalance = sinvoke getEthBalance(account);
+	uint256 ethBalance = getEthBalance(account);
 	assert ethBalance >= amount, "should have been at least what has been deposited";
 }
 
@@ -115,15 +118,16 @@ rule additiveTransfer(uint256 amt1, uint256 amt2, address from, address to) {
 	storage init = lastStorage; 
 		
 	// Transfer amt1 and then amt2 from `from` to `to`
-	sinvoke transfer(e1,to,amt1);
-	sinvoke transfer(e2,to,amt2);
-	uint256 balanceToCase1 = sinvoke getFunds(to);
-	uint256 balanceFromCase1 = sinvoke getFunds(from);
+	transfer(e1,to,amt1);
+	transfer(e2,to,amt2);
+	uint256 balanceToCase1 = getFunds(to);
+	uint256 balanceFromCase1 = getFunds(from);
 	
 	// Start a new transaction from the initial state
-	sinvoke transfer(e1, to, amt1+amt2) at init;
-	uint256 balanceToCase2 = sinvoke getFunds(to);
-	uint256 balanceFromCase2 = sinvoke getFunds(from);
+	uint256 sum_amt = amt1+amt2;
+	transfer(e1, to, sum_amt) at init;
+	uint256 balanceToCase2 = getFunds(to);
+	uint256 balanceFromCase2 = getFunds(from);
 	assert balanceToCase1 == balanceToCase2 && 
 		   balanceFromCase1 == balanceFromCase2, 
 		   "expected transfer to be additive" ;

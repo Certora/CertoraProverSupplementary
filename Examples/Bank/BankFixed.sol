@@ -1,3 +1,5 @@
+pragma solidity >= 0.4.24 < 0.8;
+
 library SafeMath {
 	function safeAdd(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
@@ -47,8 +49,6 @@ contract Bank {
 	function getTotalFunds() public view returns (uint256) {
 		return totalFunds;
 	}
-
-	function init_state() public {}
 
 	function getEthBalance(address account) public view returns (uint256){
 		return account.balance;
