@@ -1,1 +1,1 @@
-certoraRun InvertibleFixed.sol:Invertible --verify Invertible:Invertible.spec
+certoraRun CounterFixed.sol:Counter --verify Counter:Counter.spec

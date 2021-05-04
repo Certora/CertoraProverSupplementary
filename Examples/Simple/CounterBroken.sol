@@ -1,4 +1,4 @@
-contract Invertible {
+contract Counter {
 	address public admin;
 	uint public counter;
 		

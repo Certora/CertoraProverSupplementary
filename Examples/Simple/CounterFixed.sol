@@ -7,12 +7,11 @@ library SafeMath {
 
 	function safeSub(uint256 x, uint256 y) internal pure returns(uint256) {
 		assert(x >= y);
-		uint256 z = x - y;
-		return z;
+		return x - y;
     }
 }
 
-contract Invertible {
+contract Counter {
 	using SafeMath for uint256;
 	
 	address public admin;

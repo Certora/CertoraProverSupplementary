@@ -1,1 +1,1 @@
-certoraRun InvertibleBroken.sol:Invertible --verify Invertible:Invertible.spec
+certoraRun CounterBroken.sol:Counter --verify Counter:Counter.spec
