@@ -49,15 +49,24 @@ invariant address_zero_cannot_become_an_account()
 	getFunds(0) == 0
 
 
-/* Invoke the transfer method where caller is `e.msg.sender`.
-   Check that the invoke reverts if caller does not have enough funds.
+/* Invoke the transfer method where the caller is `e.msg.sender`.
+   Check that the invoke reverts if the caller does not have enough funds.
  */
-rule transfer_reverts(address to, uint256 amount) {
+rule transfer_reverts() {
+	// A rule with two free variables: 
+	//     - to - the address the transfer is passed to 
+	//     - amount - the amount of money to pass
+	address to; 
+	uint256 amount;
+	
 	env e;
 	// Get the caller's balance before the invocation of transfer
 	uint256 balance = getFunds(e.msg.sender);
-	invoke transfer(e,to,amount);
-	assert balance < amount => lastReverted , "not enough funds";
+
+	// invoke function transfer and assume the caller is w.msg.from
+	transfer@withrevert(e, to, amount);
+	// check that transfer reverts if the sender does not have enough funds 
+	assert balance < amount => lastReverted , "insufficient funds"; 
 }
 
 /* The rule checks that after a successful deposit by an account, 
@@ -65,7 +74,7 @@ rule transfer_reverts(address to, uint256 amount) {
    the subsequent invocation of the withdraw method will lead
    to a state where the Ether balance of the account will be at least
    the amount initially deposited.
-   *the exception to the rule is whether withdraw occurs earlier,
+   *the exception to the rule is whether withdraw occurs earlier
 	or if the actor sends out the funds (to potentially another address).
  */
 rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
@@ -114,7 +123,7 @@ rule additiveTransfer(uint256 amt1, uint256 amt2, address from, address to) {
 	// e1 and e2 transfer from the same address `from`
 	require e1.msg.sender == from && e2.msg.sender == from; 
 	
-	// record state before the transaction
+	// Record the state before the transaction
 	storage init = lastStorage; 
 		
 	// Transfer amt1 and then amt2 from `from` to `to`
@@ -124,11 +133,11 @@ rule additiveTransfer(uint256 amt1, uint256 amt2, address from, address to) {
 	uint256 balanceFromCase1 = getFunds(from);
 	
 	// Start a new transaction from the initial state
-	uint256 sum_amt = amt1+amt2;
+	uint256 sum_amt = amt1 + amt2;
 	transfer(e1, to, sum_amt) at init;
 	uint256 balanceToCase2 = getFunds(to);
 	uint256 balanceFromCase2 = getFunds(from);
 	assert balanceToCase1 == balanceToCase2 && 
 		   balanceFromCase1 == balanceFromCase2, 
-		   "expected transfer to be additive" ;
+		   "expected transfer to be additive";
 }
