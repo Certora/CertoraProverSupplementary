@@ -1,1 +1,1 @@
-certoraRun IterableMap.sol --verify IterableMap:simpleMap.spec --settings -assumeUnwindCond
+certoraRun IterableMap.sol --verify IterableMap:iterableMap.spec --settings -assumeUnwindCond

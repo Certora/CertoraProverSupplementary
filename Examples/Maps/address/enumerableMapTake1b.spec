@@ -1,9 +1,11 @@
 methods {
     numOfKeys() returns uint envfree
     get(address) returns address envfree
+    existsKey(address) returns bool envfree
 }
 
-definition IS_ADDRESS(address x) returns bool = 0 <= x && x <= max_uint160;
+
+definition IS_ADDRESS(address x) returns bool = 0 <= x && x <= max_address;
 
 // ghost to expose the internal ordering
 ghost list(uint) returns address;
@@ -12,6 +14,7 @@ ghost listLen() returns uint {
     init_state axiom 0 <= listLen() && listLen() < max_uint;
     axiom listLen() < max_uint;
 }
+ghost theMap(address) returns address;
 
 // hooks
 // establish the length
@@ -22,6 +25,7 @@ hook Sstore keys uint lenNew STORAGE {
 
 // establish the ghost list (so that it can be used in quantified contexts)
 hook Sload address n keys[INDEX uint index] STORAGE {
+    require IS_ADDRESS(n);
     require list(index) == n;
 }
 
@@ -31,13 +35,28 @@ hook Sstore keys[INDEX uint index] address n STORAGE {
         (forall uint i. i != index => list@new(i) == list@old(i));
 }
 
+// establish the map
+hook Sstore map[KEY address k] address v STORAGE {
+    require IS_ADDRESS(k);
+    require IS_ADDRESS(v);
+    havoc theMap assuming theMap@new(k) == v &&
+        (forall address k2. k2 != k => theMap@new(k2) == theMap@old(k2));
+}
+
+hook Sload address v map[KEY address k] STORAGE {
+    require IS_ADDRESS(k);
+    require IS_ADDRESS(v);
+    require theMap(k) == v;
+    //requireInvariant mapIffInList(k); // not needed, dangerous
+}
+
 // a predicate for checking if an address is listed (in the underlying list, not in the map)
-definition isListed(address a, uint i) returns bool = 0 <= i && i < listLen() && list(i) == a;
+definition isListed(address a, uint i) returns bool = 0 <= i && i < listLen() && list(i) == a && IS_ADDRESS(a);
 
 invariant lengthLemma() listLen() == numOfKeys()
 
 // establish that the map and the list hold the same keys
-invariant mapIffInList(address a) /*a != 0 =>*/ (get(a) != 0 <=> (exists uint i. isListed(a, i))) {
+invariant mapIffInList(address a) /*a != 0 =>*/ (theMap(a) != 0 <=> (exists uint i. isListed(a, i))) {
     preserved insert(address _, address _) with (env e) {
         requireInvariant lengthLemma();
     }
@@ -46,6 +65,10 @@ invariant mapIffInList(address a) /*a != 0 =>*/ (get(a) != 0 <=> (exists uint i.
         if (get(b) != 0) {
             requireInvariant listIsSet(b); // cannot have another instance of the removed asset
         }
+        requireInvariant lengthLemma();
+    }
+
+    preserved iterate() with (env e) {
         requireInvariant lengthLemma();
     }
 }
@@ -71,6 +94,7 @@ rule boundedLengthUpdate(method f) {
     assert newLen - origLen <= 1 && origLen - newLen <= 1;
 }
 
+
 rule checkInsert(address key, address value) {
     // a requireInvariant should be needed
     env e;
@@ -80,7 +104,7 @@ rule checkInsert(address key, address value) {
 
 rule insertRevertConditions(address key, address value) {
     env e;
-    insert(e, key, value);
+    insert@withrevert(e, key, value);
     bool succeeded = !lastReverted;
 
     assert (e.msg.value == 0 
@@ -117,3 +141,12 @@ rule noChangeOther(address other, method f) {
     assert pre == post;
 }
 
+rule checkIterate() {
+    requireInvariant lengthLemma(); // remove it, and it's not working
+    env e;
+    iterate(e);
+    address someKey;
+    requireInvariant mapIffInList(someKey);
+    require existsKey(someKey);
+    assert get(someKey) == 123;
+}

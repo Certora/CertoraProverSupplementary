@@ -7,6 +7,8 @@ methods {
 ghost _map(uint) returns uint;
 // index to key
 ghost array(uint) returns uint;
+// array length
+ghost arrayLen() returns uint;
 
 // hooks for map
 hook Sload uint v map[KEY uint k] STORAGE {
@@ -16,6 +18,22 @@ hook Sload uint v map[KEY uint k] STORAGE {
 hook Sstore map[KEY uint k] uint v STORAGE {
     havoc _map assuming _map@new(k) == v &&
         (forall uint k2. k2 != k => _map@new(k2) == _map@old(k2));
+}
+
+// hooks for array
+hook Sload uint n keys[INDEX uint index] STORAGE {
+    require array(index) == n;
+}
+
+hook Sstore keys[INDEX uint index] uint n STORAGE {
+    havoc array assuming array@new(index) == n &&
+        (forall uint i. i != index => array@new(i) == array@old(i));
+}
+
+// hooks for arrayLen
+hook Sstore keys uint lenNew STORAGE {
+    // the length of a solidity storage array is at the variable's slot
+    havoc arrayLen assuming arrayLen@new() == lenNew;
 }
 
 rule checkInsert(uint key, uint value) {

@@ -1,0 +1,363 @@
+{
+	"contractName": "IterableMap",
+		 "main_table": {
+			"tableHeader":[
+				"Test name",
+				"Result",
+				"Time(sec)",
+				"Dump"
+			],
+			"contractResult":[
+				{
+					 "tableRow": {
+						"ruleName": "checkMapGhost",
+						"result": "FAIL",
+						"time": "0",
+						"graph_link": "Report-checkMapGhost.html"
+					},
+					"isMultiRule": true
+				}
+			]
+
+		},
+		 "sub_tables": {
+			"tableHeader":[
+				"Function name",
+				"Result",
+				"Time(secs)",
+				"Dump"
+			],
+			"functionResults":[
+				{
+					"ruleName": "checkMapGhost",
+					"tableBody":[
+						{
+							 "tableRow": {
+								"funcName": "checkMapGhost_instate",
+								"result": "FAIL",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost_instate.html"
+							},
+							 "variables": {
+								"initEnv.msg.sender": "0",
+								"initEnv.msg.address": "0",
+								"initEnv.msg.value": "0",
+								"someKey": "0"
+							},
+							"assertMessage":[
+
+							],
+							 "failureCauses": {
+								"expr": "!(tacRetval0@5==UR9:uf(someKey))"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							},
+							 "callTrace": {
+								"funcName": "checkMapGhost(someKey=0x0, initCalldata=?, *struct* initEnv)",
+								"returnValue": "",
+								"status": "",
+								"revertMsg": "",
+								"childrenList":[
+									{
+										"funcName": "IterableMap.constructor",
+										"returnValue": "",
+										"status": "SUCCESS",
+										"revertMsg": "",
+										"childrenList":[]
+
+									},
+									{
+										"funcName": "IterableMap.get(0)",
+										"returnValue": "0",
+										"status": "SUCCESS",
+										"revertMsg": "",
+										"childrenList":[
+											{
+												"funcName": "Load from storage slot 1852673427797059126777135760139006525652319754650249024631321344126610074238976: 0 (see map[key] @ .certora_config/IterableMap.sol_0/0_IterableMap.sol: 3)",
+												"returnValue": "",
+												"status": "",
+												"revertMsg": "",
+												"childrenList":[]
+
+											}
+										]
+									}
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "certorafallback_0()",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost_preserve-certorafallback_0LPRP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "doSomething(uint256,uint256)",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost_preserve-doSomethingLPU256CU256RP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "insert(uint256,uint256)",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost_preserve-insertLPU256CU256RP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "iterate()",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost_preserve-iterateLPRP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "remove(uint256)",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost_preserve-removeLPU256RP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "checkMapGhost_skipped_preserve_contains(uint256)",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost-checkMapGhost_skipped_preserve_containsLPU256RP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "checkMapGhost_skipped_preserve_get(uint256)",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost-checkMapGhost_skipped_preserve_getLPU256RP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+,						{
+							 "tableRow": {
+								"funcName": "checkMapGhost_skipped_preserve_numOfKeys()",
+								"result": "SUCCESS",
+								"time": "0",
+								"graph_link": "Report-checkMapGhost-checkMapGhost_skipped_preserve_numOfKeysLPRP.html"
+							},
+							 "callResolutionTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolution":[
+
+								]
+							},
+							 "callResolutionWarningsTable": {
+								"tableHeader":[
+									"Caller",
+									"Callee",
+									"Summary"
+								],
+								"callResolutionWarnings":[
+
+								]
+							}
+						}
+					]
+
+				}
+			]
+
+		},
+		 "availableContractsTable": {
+			"sectionName": "Available contracts",
+			"tableHeader":[
+				"Name",
+				"Address",
+				"Pre-state",
+				"Methods"
+			],
+			"contractResult":[
+				{
+					 "tableRow": {
+						"name": "IterableMap",
+						"address": "ce4604a0000000000000000000000000",
+						"pre_state": "{}",
+						"methodsNames":[
+							"doSomething(uint256,uint256)",
+							"remove(uint256)",
+							"insert(uint256,uint256)",
+							"iterate()",
+							"get(uint256)",
+							"contains(uint256)",
+							"numOfKeys()"
+						]
+					}
+				}
+			]
+		}
+	}

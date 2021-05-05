@@ -6,20 +6,16 @@ Override the contract to implement custom iterators.
  */
 contract SimpleEnumerableMap {
 	mapping(address => address) internal map;
-	address[] internal keys;
-
-	function numOfKeys() external view returns (uint) { return keys.length; }
-
 	function get(address key) public view returns(address) { return map[key]; }
+
+	address[] internal keys;
+	function numOfKeys() external view returns (uint) { return keys.length; }
 	
 	function insert(address key, address value) external {
 		require(value != address(0), "0 is not a valid value");
-		if (!exists(key)) {
-			map[key] = value;
-			keys.push(key);
-		} else {
-			map[key] = value;
-		}
+		require (!exists(key), "key already exists");
+		map[key] = value;
+		keys.push(key);
 	}
 
 	function remove(address key) external {
@@ -36,12 +32,15 @@ contract SimpleEnumerableMap {
 		if (map[key] == address(0)) {
 			return false;
 		}
-		for (uint i = 0 ; i < keys.length ; i++) {
+		// no need to iterate if we established the invariant
+		/*for (uint i = 0 ; i < keys.length ; i++) {
 			if (keys[i] == key) {
 				return true;
 			}
 		}
 		return false;
+		*/
+		return true;
 	}
 
 	function indexOf(address key) internal view returns (uint) {
