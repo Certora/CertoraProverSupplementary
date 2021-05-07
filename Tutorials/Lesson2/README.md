@@ -14,9 +14,9 @@ Start with [Ball Game](BallGame/BallGame.sol), implementing a ball game with fou
 We learn here that in order to prove the required property we needed to prove a stronger invariant.
 
 # Advance Example 
-Now, for a bit more realistic example, [Manager](Manager.sol) implements transferring management role of a fund. It is a requirement that an address can manage only one fund. Let's try to prove this property.
+Now, for a bit more realistic example, [Manager](Manager/Manager.sol) implements transferring management role of a fund. It is a requirement that an address can manage only one fund. Let's try to prove this property.
 
-[Manager.spec](Manager.spec) contains a typical parametric rule 
+[Manager.spec](Manager/Manager.spec) contains a typical parametric rule 
 
 * Run:  
   ```sh
@@ -27,7 +27,7 @@ Now, for a bit more realistic example, [Manager](Manager.sol) implements transfe
 * Fix the rule
 * Check your rule as sometimes the rule is too strict, it limits the possible initial states or executions too much:
   - Insert bugs to the code that you believe should be uncovered and rerun Certora Prover 
-  - Run on [ManagerBug1](ManagerBug1.sol) and [ManagerBug2](ManagerBug2.sol)
+  - Run on [ManagerBug1](Manager/ManagerBug1.sol) and [ManagerBug2](Manager/ManagerBug2.sol)
     
 	To run on those files:
      ```sh
