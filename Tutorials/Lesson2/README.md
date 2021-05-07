@@ -2,7 +2,7 @@ In this tutorial, you will practice understanding counter-examples produced by C
 As we discussed, the tool assumes all possible input values and states as a starting state. Some of them are infeasible, which means that there is no set of operations starting from the constructor that will lead to that state. 
 
 # Simple Example
-Start with [Ball Game](Ball.sol), implementing a ball game with four players. Player 1 passes the ball to Player 2; Player 2 passes back to Player 1. Player 3 and 4 passes to each other. The ball starts at Player 1. Let's prove that the ball can never reach player 4.
+Start with [Ball Game](BallGame/BallGame.sol), implementing a ball game with four players. Player 1 passes the ball to Player 2; Player 2 passes back to Player 1. Player 3 and 4 passes to each other. The ball starts at Player 1. Let's prove that the ball can never reach player 4.
 
 * Run:  
   ```sh
