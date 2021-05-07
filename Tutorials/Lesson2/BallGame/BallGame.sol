@@ -12,8 +12,5 @@ contract BallGame {
 			ballAt = 4;
 		else if (ballAt == 4)
 			ballAt = 3;
-	}
-
-
-	//function init_stae() public { }	
+	}	
 }
