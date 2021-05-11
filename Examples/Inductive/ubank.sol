@@ -1,25 +1,33 @@
 
                             contract                    bank { 
-    enum Account {Alice,  Bob}
-    mapping (Account => uint256) balances; 
+    
+    mapping (address => uint256) balances; 
     uint256 total;
 
 
-  function deposit(Account a, uint256 amount) public {   
+  function deposit(address a, uint256 amount) public {   
      require(total + amount >= amount);
-     //  balances[Alice] <= total
-     // balances[Bob] <= total
-      balances[a] += amount;// no overflow
+     //  forall address a. balances[a] <= total
+     balances[a] += amount;// no overflow
      total += amount;
   }
 
-  function withdraw(Account b, uint256 amount)  public {          
+  function withdraw(address b, uint256 amount)  public {          
     require(balances[b] >= amount);    
     balances[b] -= amount;  
     total -= amount;  
 }
-  function transfer(Account from, Account to, uint256 amount) public {
+  function transfer(address from, address to, uint256 amount) public {
    { require(balances[from] >= amount); 
+     uint256 newFrom = balances[from]-amount;
+     uint256 newTo = balances[to]+amount;
+     balances[from] = newFrom;  
+     balances[to] = newTo;
+}
+
+ function corretTransfer(address from, address to, uint256 amount) public {
+   { require(balances[from] >= amount); 
+     require(from != to);
      uint256 newFrom = balances[from]-amount;
      uint256 newTo = balances[to]+amount;
      balances[from] = newFrom;  
