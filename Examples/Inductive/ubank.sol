@@ -1,7 +1,6 @@
-
-                            contract                    bank { 
+contract                    bank { 
     
-    mapping (address => uint256) balances; 
+    mapping (address => uint256) public balances; 
     uint256 total;
 
 
@@ -18,7 +17,7 @@
     total -= amount;  
 }
   function transfer(address from, address to, uint256 amount) public {
-   { require(balances[from] >= amount); 
+    require(balances[from] >= amount); 
      uint256 newFrom = balances[from]-amount;
      uint256 newTo = balances[to]+amount;
      balances[from] = newFrom;  
@@ -26,7 +25,7 @@
 }
 
  function corretTransfer(address from, address to, uint256 amount) public {
-   { require(balances[from] >= amount); 
+    require(balances[from] >= amount); 
      require(from != to);
      uint256 newFrom = balances[from]-amount;
      uint256 newTo = balances[to]+amount;
@@ -34,14 +33,8 @@
      balances[to] = newTo;
 }
 
-  }
    function getTotal() public returns (uint256)  {
      return total;
    }
-   function getBalanceBob() public returns (uint256)  {
-     return balances[Account.Bob];
-   }
-   function getBalanceAlice() public returns (uint256) {
-     return balances[Account.Alice];
-   }
+  
 }

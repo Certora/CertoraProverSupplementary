@@ -1,5 +1,4 @@
-
-                            contract                    bank { 
+contract                    bank { 
     enum Account {Alice,  Bob}
     mapping (Account => uint256) balances; 
     uint256 total;
@@ -18,16 +17,15 @@
     balances[b] -= amount;  
     total -= amount;  
 }
-  function transfer(Account from, Account to, uint256 amount) public {
-   { require(balances[from] >= amount); 
+  function transfer(Account from, Account to, uint256 amount) public { 
+    require(balances[from] >= amount); 
      uint256 newFrom = balances[from]-amount;
      uint256 newTo = balances[to]+amount;
      balances[from] = newFrom;  
      balances[to] = newTo;
 }
 
-  }
-   function getTotal() public returns (uint256)  {
+     function getTotal() public returns (uint256)  {
      return total;
    }
    function getBalanceBob() public returns (uint256)  {
