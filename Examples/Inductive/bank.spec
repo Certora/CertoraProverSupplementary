@@ -2,7 +2,7 @@
 methods {
 	getTotal() returns uint256 envfree
 	getBalanceBob() returns uint256 envfree
-        getBalanceAlice() returns uint256 envfree
+    getBalanceAlice() returns uint256 envfree
 }
 
 
