@@ -57,7 +57,7 @@ invariant onlyCollateralCanBorrow(address user)
  *     If borrow increased, then collateral must decrease
  *     If collateral decreased, then borrow must increase
  */
-rule antimonotonicityOfLiquidation () {
+rule antimonotonicityOfLiquidation() {
 	env e;
 	address user;
 	address to;
@@ -66,7 +66,7 @@ rule antimonotonicityOfLiquidation () {
 	uint256 borrowBefore = borrowToken.balanceOf(currentContract);
 
 	requireInvariant onlyCollateralCanBorrow(user);
-	require( to != currentContract );
+	require(to != currentContract);
 
 	liquidate(e, user, to);
 
@@ -76,4 +76,3 @@ rule antimonotonicityOfLiquidation () {
 	// <=> ---> A double implication
 	assert(borrowBefore < borrowAfter <=> collateralBefore > collateralAfter);
 }
-
