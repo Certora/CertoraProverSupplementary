@@ -4,4 +4,4 @@ certoraRun BorrowSystem.sol:SimpleBorrowSystem DummyERC20A.sol DummyERC20B.sol \
 	--solc solc8.4 \
 	--settings -postProcessCounterExamples=true,-assumeUnwindCond \
 	--staging \
-	--msg "SimpleBorrowSystem example" 
+	--msg "Simple BorrowSystem example" 
