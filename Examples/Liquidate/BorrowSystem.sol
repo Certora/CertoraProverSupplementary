@@ -106,6 +106,6 @@ contract SimpleBorrowSystem {
 
 		require(rate != 0);
 
-		return userBorrowAmount[user] * rate < userCollateralAmount[user];
+		return userBorrowAmount[user] == 0 || userBorrowAmount[user] * rate < userCollateralAmount[user];
 	}
 }
