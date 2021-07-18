@@ -1,4 +1,4 @@
-# Example of a critical bug in liquidation 
+# Example of a critical bug in liquidation
  
  A simplified version of a bug based on a real issue found in which the system losses assets. 
 
