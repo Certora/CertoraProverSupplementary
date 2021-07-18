@@ -27,8 +27,7 @@ contract SimpleBorrowSystem {
 	// actions for the batchCalls
 	uint8 internal constant CALL_BORROW = 1;
 	uint8 internal constant CALL_REPAY = 2;
-	uint8 internal constant CALL_LIQUIDATE = 3;
-
+	
 	/* Borrow amount and provide collateral */
 	function borrow(uint256 borrowAmount, uint256 collateralAmount) public {
 		userBorrowAmount[msg.sender] += borrowAmount;
@@ -40,7 +39,7 @@ contract SimpleBorrowSystem {
 		collateralToken.transferFrom(msg.sender, address(this), collateralAmount);
 	}
 
-	/* Repay part of a user's borrow and get back a part of his collateral */
+	/* The user (msg.sender) repays a part of its borrow and gets back a part of his collateral */
 	function repay(uint256 borrowAmount, uint256 collateralAmount) public {
 		userBorrowAmount[msg.sender] -= borrowAmount;
 		userCollateralAmount[msg.sender] -= collateralAmount;
