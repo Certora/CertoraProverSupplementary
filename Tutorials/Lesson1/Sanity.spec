@@ -3,14 +3,14 @@
 
 
 		First run only the rule totalFundsAfterDeposit:
-		certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --settings -rule=totalFundsAfterDeposit
+		certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --settings -rule=totalFundsAfterDeposit
 
 		This rule shows that when the initial state the totalFunds was smaller than the user funds, there is a violation. 
 
 		By adding a precondition we can verify this rule.
 		run:
 
-		certoraRun BankFixed.sol:Bank --verify Bank:Additional.spec --settings -rule=totalFundsAfterDepositWithPrecondition
+		certoraRun BankFixed.sol:Bank --verify Bank:Sanity.spec --settings -rule=totalFundsAfterDepositWithPrecondition
 
 **/
 
