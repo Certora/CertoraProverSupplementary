@@ -6,7 +6,7 @@
 
 		certoraRun Bank.sol:Bank --verify Bank:IntegrityOfDeposit.spec
 
-		A simple rule that checks the integirty of the deposit function. 
+		A simple rule that checks the integrity of the deposit function. 
 
 		Understand the counter example and then rerun:
 
