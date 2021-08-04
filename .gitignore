@@ -26,14 +26,8 @@ emv-*/
 *.smt2
 *.tac
 Results.txt
-.certora_build.json
-.certora_config/
-certora_verify.json
-/.certora_settings.json
-/.certora_verify.json
+.certora*
 .last_confs/
-*/.certora_verify.json
-*/*/.certora_verify.json
 Test/*.json
 Test/**/*.json
 Test/**/*.txt
