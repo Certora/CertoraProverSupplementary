@@ -77,7 +77,7 @@ Click the rule name to see a counter-example violating the rule.
 The counter-example shows values of the rule's parameters and variables and a call trace.
 You can investigate the call trace to see which functions were called.
 Notice the values of variables: 
-* The amount deposited in `deposit(e, amount);` is MAX_UNIT.
+* The amount deposited in `deposit(e, amount);` is MAX_UINT.
 * The `uint256 fundsBefore = getFunds(e, e.msg.sender)` is one.
 * The `uint256 fundsAfter = getFunds(e, e.msg.sender)` is zero. 
 
