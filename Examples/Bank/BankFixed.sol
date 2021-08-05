@@ -1,5 +1,10 @@
 pragma solidity >= 0.4.24 < 0.8;
 
+interface FancyAccount {
+	function sendTo() external payable returns(bool);
+}
+
+
 library SafeMath {
 	function safeAdd(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
@@ -37,7 +42,7 @@ contract Bank {
 	function withdraw() public returns (bool success)  {
 		uint256 amount = getFunds(msg.sender);
 		funds[msg.sender] = 0;
-		success = msg.sender.send(amount);
+		success = FancyAccount(msg.sender).sendTo.value(amount)();
 		require(success);
 		totalFunds = totalFunds.safeSub(amount);
 	}

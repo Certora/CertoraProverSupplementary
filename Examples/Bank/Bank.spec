@@ -3,6 +3,8 @@ methods {
 	getFunds(address) returns uint256 envfree
 	getTotalFunds() returns uint256 envfree
 	getEthBalance(address) returns uint256 envfree
+
+	sendTo()     => NONDET
 }
 
 /* Invoke the withdraw method and assume that it does not revert.
@@ -105,10 +107,15 @@ rule can_withdraw_after_any_time_and_any_other_transaction(method f) {
 			eF.block.timestamp >= _e.block.timestamp && 
 			eF.block.number >= _e.block.number; 
 	require e_.msg.sender == account; // same account that deposited
+	uint256 bbefore = getEthBalance(account);
+	uint256 fbefore = getFunds(account);
 	withdraw(e_);
+	uint256 bafter = getEthBalance(account);
+	uint256 fafter = getFunds(account);
 	
 	// check the Ether balance 
 	uint256 ethBalance = getEthBalance(account);
+	assert bbefore + fbefore == bafter + fafter;
 	assert ethBalance >= amount, "should have been at least what has been deposited";
 }
 
