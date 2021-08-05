@@ -1,16 +1,15 @@
 pragma specify 0.1
 
-methods {
-    ghost funds(account) returns mathint
-        /*
-         * [funds_monotonic] funds(a) can only be decreased by withdrawal or transfer by a
-         * [funds_positive]  funds(a) is always positive
-         * [funds_stable]    (funds(a) can only be increased by deposit by a or transfer to a)
-         * [funds_balance]   (balance is >= sum over a of funds(a))
-         */
+ghost funds(address) returns mathint;
+    /*
+     * [funds_monotonic] funds(a) can only be decreased by withdrawal or transfer by a
+     * [funds_positive]  funds(a) is always positive
+     * [funds_stable]    (funds(a) can only be increased by deposit by a or transfer to a)
+     * [funds_balance]   (balance is >= sum over a of funds(a))
+     */
 
+methods {
     deposit(uint256)
-        public payable
         /* [dep_success] deposit by a of amt succeeds if
             - message value is at least amt
             - sender's funds + amt does not overflow
@@ -22,17 +21,14 @@ methods {
             */
 
     withdraw()
-        public
+        returns bool
         /* [withdraw_success] withdraw by a always succeeds */
         /* successful withdraw by a has the following effects:
             - [withdraw_pays] a message with value (a's funds) is sent to a
             - [withdraw_zero] (a's funds are set to 0) */
-
-        returns bool
         /* [withdraw_return] withdraw returns ...? (same as a.send) */
 
-    transfer(account,uint256)
-        public
+    transfer(address,uint256)
         /* [transfer_success] transfer by a to b of amt succeeds if
             - a's funds are at least amt
             - b's funds + amt does not overflow
@@ -43,16 +39,80 @@ methods {
             */
 
     getFunds(address account)
-        public view
         /* [getFunds_success] always succeeds */
         returns (uint256)
         /* [getFunds_return]  returns funds(a) */
         envfree
 
-    getTotalFunds(address account)
-        public view
+    getTotalFunds(address) returns(uint256)
         /* [total_success] always succeeds */
-        returns(uint256)
         /* [total_correct] returns the sum over a of funds(a) */
         envfree
+}
+
+// funds ///////////////////////////////////////////////////////////////////////
+
+rule funds_monotonic(method f) {
+    assert false, "rule not implemented";
+}
+
+invariant funds_positive(address a)
+    funds(a) >= 0
+
+rule funds_stable(method f) {
+    assert false, "rule not implemented";
+}
+
+rule funds_balance() {
+    assert false, "rule not implemented";
+}
+
+// deposit /////////////////////////////////////////////////////////////////////
+
+rule dep_success() {
+    assert false, "rule not implemented";
+}
+
+rule dep_increase() {
+    assert false, "rule not implemented";
+}
+
+rule dep_correct() {
+    assert false, "rule not implemented";
+}
+
+// withdraw ////////////////////////////////////////////////////////////////////
+
+rule withdraw_success() {
+    assert false, "rule not implemented";
+}
+
+rule withdraw_pays() {
+    assert false, "rule not implemented";
+}
+
+rule withdraw_zero() {
+    assert false, "rule not implemented";
+}
+
+rule withdraw_return() {
+    assert false, "rule not implemented";
+}
+
+// transfer ////////////////////////////////////////////////////////////////////
+
+rule transfer_todo() {
+    assert false, "transfer rules not yet encoded";
+}
+
+// getFunds ////////////////////////////////////////////////////////////////////
+
+rule getFunds_todo() {
+    assert false, "getFunds rules not yet encoded";
+}
+
+// getTotalFunds ///////////////////////////////////////////////////////////////
+
+rule getTotalFunds_todo() {
+    assert false, "getTotalFunds rules not yet encoded";
 }
