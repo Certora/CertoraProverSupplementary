@@ -8,7 +8,6 @@ methods {
             - amt + this.balance does not overflow
             */
         /* successful deposit by a of amt has the following effects:
-            - [dep_increase] a's funds increase
             - [dep_correct]  a's funds increase by amt
             */
 
@@ -106,15 +105,26 @@ rule funds_balance() {
 // deposit /////////////////////////////////////////////////////////////////////
 
 rule dep_success() {
-    assert false, "TODO: rule not implemented";
-}
+    env e;
+    uint256 amount;
 
-rule dep_increase() {
-    assert false, "TODO: rule not implemented";
+    require e.msg.value >= amount;
+    require funds(e.msg.sender) + amount <= max_uint256;
+    require getTotalFunds()     + amount >= amount;
+
+    deposit@withrevert(e,amount);
+    assert !lastReverted;
 }
 
 rule dep_correct() {
-    assert false, "TODO: rule not implemented";
+    env e;
+    uint256 amount;
+
+    mathint funds_before = funds(e.msg.sender);
+    deposit(e,amount);
+    mathint funds_after  = funds(e.msg.sender);
+
+    assert funds_after == funds_before + amount;
 }
 
 // withdraw ////////////////////////////////////////////////////////////////////
