@@ -1,13 +1,5 @@
 pragma specify 0.1
 
-ghost funds(address) returns mathint;
-    /*
-     * [funds_monotonic] funds(a) can only be decreased by withdrawal or transfer by a
-     * [funds_positive]  funds(a) is always positive
-     * [funds_stable]    (funds(a) can only be increased by deposit by a or transfer to a)
-     * [funds_balance]   (balance is >= sum over a of funds(a))
-     */
-
 methods {
     deposit(uint256)
         /* [dep_success] deposit by a of amt succeeds if
@@ -44,11 +36,21 @@ methods {
         /* [getFunds_return]  returns funds(a) */
         envfree
 
-    getTotalFunds(address) returns(uint256)
+    getTotalFunds() returns(uint256)
         /* [total_success] always succeeds */
         /* [total_correct] returns the sum over a of funds(a) */
         envfree
 }
+
+ghost funds(address) returns mathint {
+    init_state axiom forall address a.funds(a) == 0;
+}
+    /*
+     * [funds_monotonic] funds(a) can only be decreased by withdrawal or transfer by a
+     * [funds_positive]  funds(a) is always positive
+     * [funds_stable]    (funds(a) can only be increased by deposit by a or transfer to a)
+     * [funds_balance]   (balance is >= sum over a of funds(a))
+     */
 
 // funds ///////////////////////////////////////////////////////////////////////
 
