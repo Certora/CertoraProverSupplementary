@@ -66,7 +66,7 @@ rule funds_monotonic(method f) {
     require funds_after < funds_before;
 
     assert f.selector != withdraw().selector
-        || f.selector != withdraw().selector,
+        || f.selector != transfer(address,uint256).selector,
         "unauthorized method reduced funds";
 
     assert e.msg.sender == a,
@@ -77,59 +77,78 @@ invariant funds_positive(address a)
     funds(a) >= 0
 
 rule funds_stable(method f) {
-    assert false, "rule not implemented";
+    env e;
+    calldataarg args;
+    address a;
+
+    mathint funds_before = funds(a);
+    f(e,args);
+    mathint funds_after  = funds(a);
+
+    require funds_after > funds_before;
+
+    assert f.selector == deposit(uint256).selector
+        || f.selector == transfer(address,uint256).selector,
+        "unauthorized method increased funds";
+
+    assert f.selector == deposit(uint256).selector
+        => a == e.msg.sender;
+
+    assert f.selector == transfer(address,uint256).selector
+        => false,
+        "TODO: check that first argument is a. Can I destructure calldataargs?";
 }
 
 rule funds_balance() {
-    assert false, "rule not implemented";
+    assert false, "TODO: how to refer to the bank's balance?";
 }
 
 // deposit /////////////////////////////////////////////////////////////////////
 
 rule dep_success() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 rule dep_increase() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 rule dep_correct() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 // withdraw ////////////////////////////////////////////////////////////////////
 
 rule withdraw_success() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 rule withdraw_pays() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 rule withdraw_zero() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 rule withdraw_return() {
-    assert false, "rule not implemented";
+    assert false, "TODO: rule not implemented";
 }
 
 // transfer ////////////////////////////////////////////////////////////////////
 
 rule transfer_todo() {
-    assert false, "transfer rules not yet encoded";
+    assert false, "TODO: transfer rules not yet encoded";
 }
 
 // getFunds ////////////////////////////////////////////////////////////////////
 
 rule getFunds_todo() {
-    assert false, "getFunds rules not yet encoded";
+    assert false, "TODO: getFunds rules not yet encoded";
 }
 
 // getTotalFunds ///////////////////////////////////////////////////////////////
 
 rule getTotalFunds_todo() {
-    assert false, "getTotalFunds rules not yet encoded";
+    assert false, "TODO: getTotalFunds rules not yet encoded";
 }
