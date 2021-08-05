@@ -46,16 +46,31 @@ ghost funds(address) returns mathint {
     init_state axiom forall address a.funds(a) == 0;
 }
     /*
-     * [funds_monotonic] funds(a) can only be decreased by withdrawal or transfer by a
+     * [funds_monotonic] funds(a) can only be decreased by withdrawals or transfers initiated by a
      * [funds_positive]  funds(a) is always positive
-     * [funds_stable]    (funds(a) can only be increased by deposit by a or transfer to a)
-     * [funds_balance]   (balance is >= sum over a of funds(a))
+     * [funds_stable]    *funds(a) can only be increased by deposit by a or transfer to a
+     * [funds_balance]   *balance is >= sum over a of funds(a)
      */
 
 // funds ///////////////////////////////////////////////////////////////////////
 
 rule funds_monotonic(method f) {
-    assert false, "rule not implemented";
+    env e;
+    calldataarg args;
+    address a;
+
+    mathint funds_before = funds(a);
+    f(e,args);
+    mathint funds_after  = funds(a);
+
+    require funds_after < funds_before;
+
+    assert f.selector != withdraw().selector
+        || f.selector != withdraw().selector,
+        "unauthorized method reduced funds";
+
+    assert e.msg.sender == a,
+        "unauthorized sender reduced funds";
 }
 
 invariant funds_positive(address a)
