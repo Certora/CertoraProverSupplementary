@@ -1,1 +1,1 @@
-certoraRun BankFixed.sol:Bank --verify Bank:Bank.spec --settings -postProcessCoutnerExamples=true
+certoraRun BankFixed.sol:Bank --verify Bank:Bank.spec --settings -postProcessCounterExamples=true
