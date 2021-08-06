@@ -42,12 +42,16 @@ methods {
     getFunds(address account)
         /* [getFunds_success] always succeeds */
         returns (uint256)
-        /* [getFunds_return]  returns getFunds(a) */
         envfree
 
-    getTotalFunds() returns(uint256)
+    getTotalFunds()
         /* [total_success] always succeeds */
-        /* [total_correct] returns the sum over a of getFunds(a) */
+        /* desired: returns the sum over a of getFunds(a)
+         * TODO: but we can't do this without violating abstraction boundaries
+         * instead, here is an approximation:
+         *    - [totalFunds_exceeds_funds] for all a, totalFunds() >= getFunds(a)
+         */
+        returns(uint256)
         envfree
 }
 
@@ -93,18 +97,38 @@ rule getFunds_stable(method f) {
     assert f.selector == deposit(uint256).selector
         => a == e.msg.sender;
 
-    assert f.selector == transfer(address,uint256).selector
-        => false,
-        "TODO: check that first argument is a. Can I destructure calldataargs?";
+    // we can't destructure calldataarg, so this is checked in
+    // getFunds_stable_transfer below
+    // assert f.selector == transfer(address,uint256).selector
+    //     => false,
+    //     "TODO: check that first argument is a. Can I destructure calldataargs?";
 }
 
-invariant getFunds_funded(env e)
-    forall address a.
-        getTotalFunds() <= stdlib.balance(e, currentContract)
-    // TODO: this doesn't quite match English description of getTotalFunds is incorrect
+rule getFunds_stable_transfer() {
+    env e;
+    address recipient; uint256 amount;
+    address a;
+
+    mathint getFunds_before = getFunds(a);
+    transfer(e, recipient, amount);
+    mathint getFunds_after  = getFunds(a);
+
+    require getFunds_after > getFunds_before;
+    assert a == recipient,
+        "call transfer to $recipient increased balance of $a";
+}
+
+rule getFunds_funded() {
+    assert false, "TODO: rule not implemented";
+}
+// invariant getFunds_funded(env e)
+//     forall address a.
+//         getTotalFunds() <= stdlib.balance(e, currentContract)
+//     // TODO: this doesn't quite match English description of getTotalFunds is incorrect
 
 // deposit /////////////////////////////////////////////////////////////////////
 
+// TODO: this is failing, I don't understand the error
 rule dep_success() {
     env e;
     uint256 amount;
@@ -134,7 +158,8 @@ rule dep_correct() {
 rule withdraw_success() {
     env e;
     withdraw@withrevert(e);
-    assert !lastReverted;
+    assert !lastReverted,
+        "withdraw failed";
 }
 
 rule withdraw_pays() {
@@ -160,23 +185,74 @@ rule withdraw_zero() {
 }
 
 rule withdraw_return() {
+    // TODO: I'm not sure how to connect the return value of send with the
+    // return value of withdraw 
     assert false, "TODO: rule not implemented";
 }
 
 // transfer ////////////////////////////////////////////////////////////////////
 
-rule transfer_todo() {
-    assert false, "TODO: transfer rules not yet encoded";
+rule transfer_success() {
+    env e;
+    address recipient; uint256 amount;
+
+    require getFunds(e.msg.sender) > amount;
+
+    mathint recipient_funds = getFunds(recipient);
+    require recipient_funds + amount <= max_uint256;
+
+    transfer@withrevert(e, recipient,amount);
+
+    assert !lastReverted,
+        "valid call to transfer failed";
+}
+
+rule transfer_increase() {
+    env e;
+    address recipient; uint256 amount;
+
+    mathint recipient_funds_before = getFunds(recipient);
+
+    transfer(e, recipient, amount);
+
+    mathint recipient_funds_after = getFunds(recipient);
+
+    assert recipient_funds_after >= recipient_funds_before + amount,
+        "recipient received insufficient funds";
+}
+
+rule transfer_decrease() {
+    env e;
+    address recipient; uint256 amount;
+
+    mathint sender_funds_before = getFunds(e.msg.sender);
+
+    transfer(e, recipient, amount);
+
+    mathint sender_funds_after = getFunds(e.msg.sender);
+
+    assert sender_funds_after >= sender_funds_before - amount,
+        "sender lost too many funds";
 }
 
 // getFunds ////////////////////////////////////////////////////////////////////
 
-rule getFunds_todo() {
-    assert false, "TODO: getFunds rules not yet encoded";
+rule getFunds_success() {
+    address a;
+
+    getFunds@withrevert(a);
+    assert !lastReverted,
+        "getFunds failed";
 }
 
 // getTotalFunds ///////////////////////////////////////////////////////////////
 
-rule getTotalFunds_todo() {
-    assert false, "TODO: getTotalFunds rules not yet encoded";
+rule getTotalFunds_success() {
+    address a;
+    getTotalFunds@withrevert();
+    assert !lastReverted,
+        "getTotalFunds failed";
 }
+
+invariant totalFunds_exceeds_funds (address a)
+    getTotalFunds() >= getFunds(a)
