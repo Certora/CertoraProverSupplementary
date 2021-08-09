@@ -16,6 +16,7 @@ methods {
             - message value is at least amt
             - sender's getFunds + amt does not overflow
             - amt + this.balance does not overflow
+            - TODO: message sender is not 0 (note: is this even possible?)
             */
         /* successful deposit by a of amt has the following effects:
             - [dep_correct]  a's getFunds increase by amt
@@ -50,6 +51,7 @@ methods {
          * TODO: but we can't do this without violating abstraction boundaries
          * instead, here is an approximation:
          *    - [totalFunds_exceeds_funds] for all a, totalFunds() >= getFunds(a)
+         *    - TODO: I think this isn't provable without full invariant
          */
         returns(uint256)
         envfree
@@ -133,9 +135,12 @@ rule dep_success() {
     env e;
     uint256 amount;
 
+    require e.msg.sender != 0;
     require e.msg.value >= amount;
     require getFunds(e.msg.sender) + amount <= max_uint256;
-    require getTotalFunds()        + amount >= amount;
+    // TODO: I think the following should fail on overflow, but it seems not to
+    // require getTotalFunds()        + amount >= amount;
+    require getTotalFunds() + amount <= max_uint256;
 
     deposit@withrevert(e,amount);
     assert !lastReverted,
