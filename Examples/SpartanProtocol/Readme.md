@@ -1,4 +1,4 @@
-How to perform the attack:
+## How to perform the attack:
 
 1. Deploy 2 instances of MyToken - token0, token1.
 2. Deploy SpartanPool where token0 and token1 are the cotracts addresses deployed at step 1.
