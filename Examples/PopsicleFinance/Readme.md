@@ -1,4 +1,4 @@
-How to perform the attack:
+## How to perform the attack:
 
 1. Deploy PopsicleFinance contract.
 2. User1 deposit 10 ether.
