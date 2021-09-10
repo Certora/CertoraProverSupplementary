@@ -1,4 +1,4 @@
-pragma solidity ^0.6.7;
+pragma solidity ^0.7.6;
 
 
 interface iERC20 {
@@ -14,7 +14,7 @@ interface iERC20 {
 }
 
 contract ERC20 is iERC20 {
-    uint256 total;
+    uint256 public total;
     mapping (address => uint) balances;
     mapping (address => mapping (address => uint)) allowance;
 
@@ -26,7 +26,7 @@ contract ERC20 is iERC20 {
         return address(this);
     }
 
-    function totalSupply() external view override returns (uint256) {
+    function totalSupply() external view override returns (uint) {
         return total;
     }
     function balanceOf(address account) external override view returns (uint256) {
@@ -48,12 +48,12 @@ contract ERC20 is iERC20 {
         return true;
     }
     function transferFrom(address sender, address recipient, uint256 amount) external override returns (bool) {
-        if (balances[sender] < amount || allowance[sender][recipient] < amount) {
-            return false;
-        }
+        // if (balances[sender] < amount || allowance[sender][recipient] < amount) {
+        //     return false;
+        // }
         balances[sender] -= amount;
         balances[recipient] += amount;
-        allowance[sender][msg.sender] -=  amount;
+        // allowance[sender][msg.sender] -=  amount;
         return true;
     }
 

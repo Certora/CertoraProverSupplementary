@@ -21,7 +21,9 @@ contract ERC20 is iERC20 {
     string public name;
     string public symbol;
     uint public decimals;
-
+    
+    event Print1(uint amount, uint balance);
+    
     function myAddress() external override returns (address) {
         return address(this);
     }
@@ -44,10 +46,10 @@ contract ERC20 is iERC20 {
         allowance[msg.sender][spender] = amount;
         return true;
     }
-    function transferFrom(address sender, address recipient, uint256 amount) external override returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) external virtual override returns (bool) {
+        emit Print1(amount, balances[sender]);
         balances[sender] -= amount;
         balances[recipient] += amount;
-        allowance[sender][msg.sender] -=  amount;
         return true;
     }
 
