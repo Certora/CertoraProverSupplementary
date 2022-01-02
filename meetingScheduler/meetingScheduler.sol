@@ -26,7 +26,7 @@ contract MeetingScheduler{
         return meetings[meetingId];
     }
 
-    function scheduleMetting(uint256 meetingId, uint256 startTime, uint256 endTime) public {
+    function scheduleMeeting(uint256 meetingId, uint256 startTime, uint256 endTime) public {
         require(meetings[meetingId].status == MeetingStatus.UNINITIALIZED, "meeting has been scheduled");
         require(startTime > block.timestamp, "invalid start time, meeting has to be scheduled in the future");
         require(endTime > startTime,"meeting has to end after it starts");
@@ -39,7 +39,7 @@ contract MeetingScheduler{
         });
     }
 
-    function startMeetings(uint256 meetingId) public {
+    function startMeeting(uint256 meetingId) public {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(scheduledMeeting.status == MeetingStatus.PENDING, "can't start a meeting if isn't pending");
         require(block.timestamp >= scheduledMeeting.startTime, "meeting can't start in the past");
@@ -56,7 +56,7 @@ contract MeetingScheduler{
         require(scheduledMeeting.status!=MeetingStatus.CANCELLED, "can't cancel twice");
         meetings[meetingId].status = MeetingStatus.CANCELLED;
     }
-    function endMeetings(uint256 meetingId) public {
+    function endMeeting(uint256 meetingId) public {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(scheduledMeeting.status == MeetingStatus.STARTED, "can't end a meeting if not started");
         require(block.timestamp >= scheduledMeeting.endTime, "meeting can't start in the past");
