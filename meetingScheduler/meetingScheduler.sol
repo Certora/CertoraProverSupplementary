@@ -56,7 +56,7 @@ contract MeetingScheduler{
     function endMeeting(uint256 meetingId) public {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(scheduledMeeting.status == MeetingStatus.STARTED, "can't end a meeting if not started");
-        require(block.timestamp >= scheduledMeeting.endTime, "meeting can't start in the past");
+        require(block.timestamp >= scheduledMeeting.endTime, "meeting can't end in the future");
             
         meetings[meetingId].status = MeetingStatus.ENDED;
         
