@@ -16,15 +16,18 @@ contract MeetingScheduler{
     }
     mapping(uint256 => ScheduledMeeting) private meetings;
 
-    function getState(ScheduledMeeting memory meeting) external pure returns (MeetingStatus){
+    function getState(ScheduledMeeting memory meeting) public pure returns (MeetingStatus){
         return meeting.status;
     }
-    function getScheduledMeetingInfo(uint256 meetingId) external view returns (ScheduledMeeting memory) {
+    function getStateById(uint256 meetingId) external returns (MeetingStatus){
+        return getState(getScheduledMeetingInfo(meetingId));
+    }
+    function getScheduledMeetingInfo(uint256 meetingId) public view returns (ScheduledMeeting memory) {
         return meetings[meetingId];
     }
 
-    function scheduleMetting(uint256 meetingId, uint256 startTime, uint256 endTime) external returns (uint256 scheduleId){
-        require(meetings[scheduleId].status == MeetingStatus.UNINITIALIZED, "meeting has been scheduled");
+    function scheduleMetting(uint256 meetingId, uint256 startTime, uint256 endTime) public {
+        require(meetings[meetingId].status == MeetingStatus.UNINITIALIZED, "meeting has been scheduled");
         require(startTime > block.timestamp, "invalid start time, meeting has to be scheduled in the future");
         require(endTime > startTime,"meeting has to end after it starts");
         meetings[meetingId] = ScheduledMeeting({
@@ -36,7 +39,7 @@ contract MeetingScheduler{
         });
     }
 
-    function startMeetings(uint256 meetingId) external {
+    function startMeetings(uint256 meetingId) public {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(scheduledMeeting.status == MeetingStatus.PENDING, "can't start a meeting if isn't pending");
         require(block.timestamp >= scheduledMeeting.startTime, "meeting can't start in the past");
@@ -45,7 +48,7 @@ contract MeetingScheduler{
         
     }
 
-    function cancelMeeting(uint256 meetingId) external{
+    function cancelMeeting(uint256 meetingId) public{
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(scheduledMeeting.status!=MeetingStatus.UNINITIALIZED,"meeting hasn't scheduled");
         require(scheduledMeeting.status!=MeetingStatus.STARTED,"meeting has started");
@@ -53,7 +56,7 @@ contract MeetingScheduler{
         require(scheduledMeeting.status!=MeetingStatus.CANCELLED, "can't cancel twice");
         meetings[meetingId].status = MeetingStatus.CANCELLED;
     }
-    function endMeetings(uint256 meetingId) external {
+    function endMeetings(uint256 meetingId) public {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(scheduledMeeting.status == MeetingStatus.STARTED, "can't end a meeting if not started");
         require(block.timestamp >= scheduledMeeting.endTime, "meeting can't start in the past");
@@ -62,7 +65,7 @@ contract MeetingScheduler{
         
     }
 
-    function joinMeeting(uint256 meetingId) external{
+    function joinMeeting(uint256 meetingId) public{
         ScheduledMeeting memory meeting = meetings[meetingId];
         require(meeting.status == MeetingStatus.STARTED, "can only join to an existing meeting");
         meetings[meetingId].numOfParticipents++;
