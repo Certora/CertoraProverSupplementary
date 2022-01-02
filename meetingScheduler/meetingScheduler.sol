@@ -50,10 +50,7 @@ contract MeetingScheduler{
 
     function cancelMeeting(uint256 meetingId) public{
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
-        require(scheduledMeeting.status!=MeetingStatus.UNINITIALIZED,"meeting hasn't scheduled");
-        require(scheduledMeeting.status!=MeetingStatus.STARTED,"meeting has started");
-        require(scheduledMeeting.status!=MeetingStatus.ENDED,"meeting has ended");
-        require(scheduledMeeting.status!=MeetingStatus.CANCELLED, "can't cancel twice");
+        require(scheduledMeeting.status == MeetingStatus.PENDING, "only if a meeting is pending, you can cancel it");
         meetings[meetingId].status = MeetingStatus.CANCELLED;
     }
     function endMeeting(uint256 meetingId) public {
@@ -70,4 +67,9 @@ contract MeetingScheduler{
         require(meeting.status == MeetingStatus.STARTED, "can only join to an existing meeting");
         meetings[meetingId].numOfParticipents++;
     }
+
+    // function buggyCancelMeeting(uint256 meetingId) public{
+    //     require(meetings[meetingId].status == MeetingStatus.STARTED,"BUG");
+    //     meetings[meetingId].status = MeetingStatus.UNINITIALIZED;
+    // }
 }
