@@ -34,7 +34,7 @@ contract ReserveList{
                 reserves[token].id = i;
                 underlyingList[i] = token;
                 reserveCount = reserveCount +1;
-                //return;
+                //return; bug: this line makes that the reserves fill all the holes in underlyingList
             }
         }
         reserves[token].id = reserveCount;
