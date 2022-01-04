@@ -22,6 +22,8 @@ contract ReserveListBug2{
         return reserveCount;
     }
     function addReserve(address token,uint256 fee) public{
+        //here, we don't check if the reserve we want to add is in the data structure(s).
+        
         //bool alreadyAdded = reserves[token].id != 0 || underlyingList[0] == token;
         //require(!alreadyAdded, "reserve is already in the database");
         reserves[token] = ReserveData({

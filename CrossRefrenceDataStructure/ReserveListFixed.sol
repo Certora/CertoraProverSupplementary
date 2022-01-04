@@ -1,5 +1,8 @@
 pragma solidity ^0.8.7;
-
+//A contract that mimicks the AAVE data structure. the concept of two dependent data structures, 
+//in our case reserves that pairs tokens with reserves, and underlyingList that pairs tokens with unique ids.
+//note that the id in each reserveshould corralate with the index of the token used as key in underlying.
+//  reserves[token] = reserve <=> underlying[reserve.id] = token 
 contract ReserveListFixed{
     struct ReserveData{
         uint256 id;
