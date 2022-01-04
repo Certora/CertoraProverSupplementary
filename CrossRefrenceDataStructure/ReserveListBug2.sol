@@ -1,6 +1,6 @@
 pragma solidity ^0.8.7;
 
-contract ReserveListFixed{
+contract ReserveListBug2{
     struct ReserveData{
         uint256 id;
         address token;
@@ -22,8 +22,8 @@ contract ReserveListFixed{
         return reserveCount;
     }
     function addReserve(address token,uint256 fee) public{
-        bool alreadyAdded = reserves[token].id != 0 || underlyingList[0] == token;
-        require(!alreadyAdded, "reserve is already in the database");
+        //bool alreadyAdded = reserves[token].id != 0 || underlyingList[0] == token;
+        //require(!alreadyAdded, "reserve is already in the database");
         reserves[token] = ReserveData({
             id: 0,
             token: token,

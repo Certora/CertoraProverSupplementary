@@ -2,8 +2,11 @@ methods {
     getToken(uint256) returns address envfree
     getIdOfToken(address) returns uint256 envfree
 }
-
-invariant correlateMappings(uint256 index1, uint256 index2)
+definition corralates(uint256 index) returns bool = getToken(index) != 0 => getIdOfToken(getToken(index)) == index;
+definition checkDuplicates(uint256 index1, uint256 index2) returns bool = index1 != index2 => (getToken(index1) != getToken(index2) || getToken(index1) == 0);
+invariant existsAndUniqueWithDefs(uint256 index1, uint256 index2)
+    corralates(index1) && corralates(index2) && checkDuplicates(index1, index2)
+invariant existsAndUnique(uint256 index1, uint256 index2)
     (getToken(index1) != 0 => getIdOfToken(getToken(index1)) == index1) && (getToken(index2) != 0 => getIdOfToken(getToken(index2)) == index2) && (index1 != index2 => (getToken(index1) != getToken(index2) || getToken(index1) == 0))
 
 // invariant noDuplicates(uint256 index1, uint256 index2)
