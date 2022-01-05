@@ -16,15 +16,11 @@ contract MeetingScheduler{
     }
     mapping(uint256 => ScheduledMeeting) private meetings;
 
-    function getState(ScheduledMeeting memory meeting) public pure returns (MeetingStatus){
-        return meeting.status;
-    }
+    
     function getStateById(uint256 meetingId) external returns (MeetingStatus){
         return getState(getScheduledMeetingInfo(meetingId));
     }
-    function getScheduledMeetingInfo(uint256 meetingId) public view returns (ScheduledMeeting memory) {
-        return meetings[meetingId];
-    }
+    
 
     function scheduleMeeting(uint256 meetingId, uint256 startTime, uint256 endTime) public {
         require(meetings[meetingId].status == MeetingStatus.UNINITIALIZED, "meeting has been scheduled");

@@ -1,4 +1,4 @@
-certoraRun ReserveListFixed.sol --verify ReserveListFixed:reserves.spec \
+certoraRun ReserveListBug3.sol --verify ReserveListBug3:reserves.spec \
 --optimistic_loop \
---loop_iter 10 \
+--loop_iter 3 \
 --msg "$1"

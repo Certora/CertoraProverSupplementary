@@ -3,7 +3,7 @@ pragma solidity ^0.8.7;
 //in our case reserves that pairs tokens with reserves, and underlyingList that pairs tokens with unique ids.
 //note that the id in each reserveshould corralate with the index of the token used as key in underlying.
 //  reserves[token] = reserve <=> underlying[reserve.id] = token 
-contract ReserveListFixed{
+contract ReserveListBug3{
     struct ReserveData{
         uint256 id;
         address token;
@@ -46,7 +46,7 @@ contract ReserveListFixed{
     }
     function removeReserve(address token) public{
         ReserveData memory reserve = reserves[token];
-        underlyingList[reserves[token].id] = address(0);
+        //underlyingList[reserves[token].id] = address(0);
         delete reserves[token];
         reserveCount = reserveCount -1;
     }
