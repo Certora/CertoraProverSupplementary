@@ -1,24 +1,11 @@
 pragma solidity ^0.8.7;
-
-contract MeetingScheduler {
-    enum MeetingStatus {
-        UNINITIALIZED,
-        PENDING,
-        STARTED,
-        ENDED,
-        CANCELLED
-    }
-    struct ScheduledMeeting {
-        uint256 meetingId;
-        uint256 startTime;
-        uint256 endTime;
-        uint256 numOfParticipents;
-        MeetingStatus status;
-    }
+import "./IMeetingScheduler.sol";
+contract MeetingScheduler is IMeetingScheduler {
+    
     mapping(uint256 => ScheduledMeeting) private meetings;
 
     function getStateById(uint256 meetingId)
-        public
+        external
         view
         returns (MeetingStatus)
     {
@@ -29,7 +16,7 @@ contract MeetingScheduler {
         uint256 meetingId,
         uint256 startTime,
         uint256 endTime
-    ) public {
+    ) external {
         require(
             meetings[meetingId].status == MeetingStatus.UNINITIALIZED,
             "meeting has been scheduled"
@@ -48,7 +35,7 @@ contract MeetingScheduler {
         });
     }
 
-    function startMeeting(uint256 meetingId) public {
+    function startMeeting(uint256 meetingId) external {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(
             scheduledMeeting.status == MeetingStatus.PENDING,
@@ -65,7 +52,7 @@ contract MeetingScheduler {
         meetings[meetingId].status = MeetingStatus.STARTED;
     }
 
-    function cancelMeeting(uint256 meetingId) public {
+    function cancelMeeting(uint256 meetingId) external {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(
             scheduledMeeting.status == MeetingStatus.PENDING,
@@ -74,7 +61,7 @@ contract MeetingScheduler {
         meetings[meetingId].status = MeetingStatus.CANCELLED;
     }
 
-    function endMeeting(uint256 meetingId) public {
+    function endMeeting(uint256 meetingId) external {
         ScheduledMeeting memory scheduledMeeting = meetings[meetingId];
         require(
             scheduledMeeting.status == MeetingStatus.STARTED,
@@ -88,7 +75,7 @@ contract MeetingScheduler {
         meetings[meetingId].status = MeetingStatus.ENDED;
     }
 
-    function joinMeeting(uint256 meetingId) public {
+    function joinMeeting(uint256 meetingId) external {
         ScheduledMeeting memory meeting = meetings[meetingId];
         require(
             meeting.status == MeetingStatus.STARTED,
@@ -97,7 +84,7 @@ contract MeetingScheduler {
         meetings[meetingId].numOfParticipents++;
     }
 
-    // function buggyCancelMeeting(uint256 meetingId) public{
+    // function buggyCancelMeeting(uint256 meetingId) external{
     //     require(meetings[meetingId].status == MeetingStatus.STARTED,"BUG");
     //     meetings[meetingId].status = MeetingStatus.UNINITIALIZED;
     // }

@@ -1,29 +1,25 @@
 pragma solidity ^0.8.7;
+import "./IReserveList.sol";
 
-contract ReserveListBug1 {
-    struct ReserveData {
-        uint256 id;
-        address token;
-        uint256 fee;
-    }
+contract ReserveListBug1 is IReserveList{
 
     mapping(address => ReserveData) internal reserves;
     mapping(uint256 => address) internal underlyingList;
     uint16 internal reserveCount = 0;
 
-    function getToken(uint256 index) public view returns (address) {
+    function getToken(uint256 index) external view returns (address) {
         return underlyingList[index];
     }
 
-    function getIdOfToken(address token) public view returns (uint256) {
+    function getIdOfToken(address token) external view returns (uint256) {
         return reserves[token].id;
     }
 
-    function getReserveCount() public view returns (uint256) {
+    function getReserveCount() external view returns (uint256) {
         return reserveCount;
     }
 
-    function addReserve(address token, uint256 fee) public {
+    function addReserve(address token, uint256 fee) external {
         bool alreadyAdded = reserves[token].id != 0 ||
             underlyingList[0] == token;
         require(!alreadyAdded, "reserve is already in the database");
@@ -41,7 +37,7 @@ contract ReserveListBug1 {
         reserveCount = reserveCount + 1;
     }
 
-    function removeReserve(address token) public {
+    function removeReserve(address token) external {
         ReserveData memory reserve = reserves[token];
         underlyingList[reserves[token].id] = address(0);
         delete reserves[token];

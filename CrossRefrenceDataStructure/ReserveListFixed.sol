@@ -1,33 +1,29 @@
 pragma solidity ^0.8.7;
 
+import "./IReserveList.sol";
 //A contract that mimicks the AAVE data structure. the concept of two dependent data structures,
 //in our case reserves that pairs tokens with reserves, and underlyingList that pairs tokens with unique ids.
 //note that the id in each reserveshould corralate with the index of the token used as key in underlying.
 //  reserves[token] = reserve <=> underlying[reserve.id] = token
-contract ReserveListFixed {
-    struct ReserveData {
-        uint256 id;
-        address token;
-        uint256 fee;
-    }
+contract ReserveListFixed is IReserveList {
 
     mapping(address => ReserveData) internal reserves;
     mapping(uint256 => address) internal underlyingList;
     uint16 internal reserveCount = 0;
 
-    function getTokenAtIndex(uint256 index) public view returns (address) {
+    function getTokenAtIndex(uint256 index) external view returns (address) {
         return underlyingList[index];
     }
 
-    function getIdOfToken(address token) public view returns (uint256) {
+    function getIdOfToken(address token) external view returns (uint256) {
         return reserves[token].id;
     }
 
-    function getReserveCount() public view returns (uint256) {
+    function getReserveCount() external view returns (uint256) {
         return reserveCount;
     }
 
-    function addReserve(address token, uint256 fee) public {
+    function addReserve(address token, uint256 fee) external {
         bool alreadyAdded = reserves[token].id != 0 ||
             underlyingList[0] == token;
         require(!alreadyAdded, "reserve is already in the database");
@@ -45,7 +41,7 @@ contract ReserveListFixed {
         reserveCount = reserveCount + 1;
     }
 
-    function removeReserve(address token) public {
+    function removeReserve(address token) external {
         ReserveData memory reserve = reserves[token];
         underlyingList[reserves[token].id] = address(0);
         delete reserves[token];
