@@ -1,3 +1,5 @@
+pragma solidity < 0.8;
+
 contract Counter {
 	address public admin;
 	uint public counter;
